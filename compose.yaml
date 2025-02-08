@@ -1,0 +1,49 @@
+version: 3.8
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0.20
+    container_name: MOSQUITTO
+    restart: always
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - iot
+  telegraf:
+    image: telegraf:1.33-alpine
+    container_name: MONITOR
+    restart: always
+    volumes:
+      - ./monitor/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    env_file:
+      - ./knowledge/.env
+      - ./monitor/.env
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
+      - influxdb
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: KNOWLEDGE
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - ./knowledge:/var/lib/influxdb2
+      - ./knowledge/config:/etc/influxdb2
+    env_file:
+      - ./knowledge/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+    networks:
+      - iot
+
+networks:
+  iot:
