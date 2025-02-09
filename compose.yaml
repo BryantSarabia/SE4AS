@@ -6,7 +6,7 @@ services:
     container_name: MOSQUITTO
     restart: always
     ports:
-      - 1883:1883
+      - 1882:1883
       - 9001:9001
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
@@ -52,7 +52,8 @@ services:
       - ./field-simulator/combined.log:/app/combined.log
       - ./field-simulator/error.log:/app/error.log
     environment:
-      - MQTT_BROKER=mqtt://mosquitto:1883
+      - BROKER_URL=mqtt://mosquitto:1883
+      - DEBUG=true
     networks:
       - iot
     depends_on:

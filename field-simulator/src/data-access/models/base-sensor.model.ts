@@ -56,10 +56,16 @@ export abstract class BaseSensor<T> implements Sensor<T> {
 
   initialize(): void {
     this.connectToMqtt();
-    this.mqttClient.subscribe(this.deactivationTopic);
-    this.mqttClient.on("message", this.deactivate.bind(this));
-    this.mqttClient.publish(this.activationTopic, "");
-    this.simulate();
+    this.mqttClient.on("connect", () => {
+      this.mqttClient.subscribe(this.deactivationTopic);
+      this.mqttClient.on("message", this.deactivate.bind(this));
+      this.mqttClient.publish(this.activationTopic, "");
+      this.send();
+      this.simulate();
+      this.logger.info(
+        `Sensor ${this.id} with type ${this.type} connected to MQTT`
+      );
+    });
     this.logger.info(`Sensor ${this.id} with type ${this.type} initialized`);
   }
 

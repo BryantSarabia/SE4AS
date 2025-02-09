@@ -43,11 +43,11 @@ export abstract class BaseActuator<T> implements Actuator<T> {
 
   initialize(): void {
     this.connectToMqtt();
-    if (this.mqttClient.connected) {
+    this.mqttClient.on("connect", () => {
       this.mqttClient.subscribe(this.deactivationTopic);
       this.mqttClient.on("message", this.deactivate.bind(this));
       this.mqttClient.publish(this.activationTopic, "");
-    }
+    });
   }
 
   connectToMqtt(): void {
