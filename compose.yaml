@@ -1,4 +1,4 @@
-version: 3.8
+version: "3.8"
 
 services:
   mosquitto:
@@ -44,6 +44,16 @@ services:
       retries: 3
     networks:
       - iot
-
+  field-simulator:
+    build: ./field-simulator
+    container_name: FIELD_SIMULATOR
+    restart: always
+    environment:
+      - MQTT_BROKER=mqtt://mosquitto:1883
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
+    
 networks:
   iot:
