@@ -10,17 +10,17 @@ export interface Field {
   temperature: number;
   humidity: number;
   light: number;
-  sensors: Sensor<any>[];
+  sensors: Sensor<unknown>[];
   actuators: Actuator[];
   zoneId: Zone["id"];
 
-  getSensorById(id: number): Sensor<any> | undefined;
+  getSensorById(id: number): Sensor<unknown> | undefined;
   getActuatorById(id: number): Actuator | undefined;
-  getSensorsByType(type: SensorType): Sensor<any>[];
+  getSensorsByType(type: SensorType): Sensor<unknown>[];
   getActuatorsByType(type: ActuatorType): Actuator[];
-  addSensor(sensor: Sensor<any>): void;
+  addSensor(sensor: Sensor<unknown>): void;
   addActuator(actuator: Actuator): void;
-  deleteSensor(id: Sensor<any>["id"]): void;
+  deleteSensor(id: Sensor<unknown>["id"]): void;
   deleteActuator(id: Actuator["id"]): void;
   getTemperature(): number;
   getHumidity(): number;

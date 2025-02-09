@@ -9,15 +9,15 @@ export class Logger implements LoggerInterface {
     this.logger = logger;
   }
 
-  error(...message: any[]): void {
+  error(...message: unknown[]): void {
     this.logger.error(message);
   }
 
-  info(...message: any[]): void {
+  info(...message: unknown[]): void {
     this.logger.info(message);
   }
 
-  warn(...message: any[]): void {
+  warn(...message: unknown[]): void {
     this.logger.warn(message);
   }
 }

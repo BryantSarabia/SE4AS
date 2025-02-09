@@ -85,12 +85,12 @@ export abstract class BaseSensor<T> implements Sensor<T> {
       const value = this.getValue();
       const data = JSON.stringify({ value });
       this.logger.info(
-        `Sensor ${this.id} with type ${this.type} sending value: ${value}`
+        `Sensor ${this.id} with type ${this.type} sending value: ${value}`,
       );
       this.mqttClient.publish(this.publishTopic, data); // zone/:zoneId/field/:fieldId/sensor/:sensorId/:sensorType
     } catch (error) {
       this.logger.error(
-        `Error sending data from sensor ${this.id} with type ${this.type}: ${error}`
+        `Error sending data from sensor ${this.id} with type ${this.type}: ${error}`,
       );
     }
   }
@@ -100,7 +100,7 @@ export abstract class BaseSensor<T> implements Sensor<T> {
   }
 
   deactivate(): OnMqttMessage {
-    return (topic, _) => {
+    return (topic) => {
       if (!topic || !(topic === this.deactivationTopic)) return;
       this.destroy();
     };

@@ -16,7 +16,6 @@ export class TemperatureSensor extends BaseSensor<number> {
     const randomProbability = random.int(0, 100);
     if (randomProbability > probability) {
       const by = random.float(-1, 1);
-      const shouldIncrease = random.boolean();
       this.value += by;
     }
     return this.value;

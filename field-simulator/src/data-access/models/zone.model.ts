@@ -5,7 +5,7 @@ export class Zone implements ZoneInterface {
   name: string;
   fields: Field[] = [];
 
-  constructor({ id, name, fields }: ZoneInterface) {
+  constructor({ id, name }: ZoneInterface) {
     this.id = id;
     this.name = name;
   }

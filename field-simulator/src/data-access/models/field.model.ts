@@ -12,7 +12,7 @@ export class Field implements FieldInterface {
   temperature: number = 0;
   humidity: number = 0;
   light: number = 0;
-  sensors: Sensor<any>[] = [];
+  sensors: Sensor<unknown>[] = [];
   actuators: Actuator[] = [];
   zoneId: number;
 
@@ -22,7 +22,7 @@ export class Field implements FieldInterface {
     this.zoneId = zoneId;
   }
 
-  getSensorById(id: number): Sensor<any> | undefined {
+  getSensorById(id: number): Sensor<unknown> | undefined {
     return this.sensors.find((sensor) => sensor.id === id);
   }
 
@@ -30,7 +30,7 @@ export class Field implements FieldInterface {
     return this.actuators.find((actuator) => actuator.id === id);
   }
 
-  getSensorsByType(type: SensorType): Sensor<any>[] {
+  getSensorsByType(type: SensorType): Sensor<unknown>[] {
     return this.sensors.filter((sensor) => sensor.type === type);
   }
 
@@ -38,7 +38,7 @@ export class Field implements FieldInterface {
     return this.actuators.filter((actuator) => actuator.type === type);
   }
 
-  addSensor(sensor: Sensor<any>): void {
+  addSensor(sensor: Sensor<unknown>): void {
     this.sensors = [...this.sensors, sensor];
   }
 
@@ -46,7 +46,7 @@ export class Field implements FieldInterface {
     this.actuators = [...this.actuators, actuator];
   }
 
-  deleteSensor(id: Sensor<any>["id"]): void {
+  deleteSensor(id: Sensor<unknown>["id"]): void {
     const index = this.sensors.findIndex((sensor) => sensor.id === id);
     const sensorToDelete = this.sensors[index];
     sensorToDelete.destroy();
@@ -69,8 +69,8 @@ export class Field implements FieldInterface {
   getTemperature(): number {
     const temperatureSensors = this.getSensorsByType(SensorType.TEMPERATURE);
     const totalTemperature = temperatureSensors.reduce(
-      (acc, sensor) => acc + sensor.getValue(),
-      0
+      (acc, sensor) => acc + (sensor.getValue() as number),
+      0,
     );
     return totalTemperature / Math.max(1, temperatureSensors.length);
   }
@@ -78,8 +78,8 @@ export class Field implements FieldInterface {
   getHumidity(): number {
     const humiditySensors = this.getSensorsByType(SensorType.HUMIDITY);
     const totalHumidity = humiditySensors.reduce(
-      (acc, sensor) => acc + sensor.getValue(),
-      0
+      (acc, sensor) => acc + (sensor.getValue() as number),
+      0,
     );
     return totalHumidity / Math.max(1, humiditySensors.length);
   }
@@ -87,8 +87,8 @@ export class Field implements FieldInterface {
   getLight(): number {
     const lightSensors = this.getSensorsByType(SensorType.LIGHT);
     const totalLight = lightSensors.reduce(
-      (acc, sensor) => acc + sensor.getValue(),
-      0
+      (acc, sensor) => acc + (sensor.getValue() as number),
+      0,
     );
     return totalLight / Math.max(1, lightSensors.length);
   }
@@ -96,8 +96,8 @@ export class Field implements FieldInterface {
   getSoilMoisture(): number {
     const soilMoistureSensors = this.getSensorsByType(SensorType.SOIL_MOISTURE);
     const totalSoilMoisture = soilMoistureSensors.reduce(
-      (acc, sensor) => acc + sensor.getValue(),
-      0
+      (acc, sensor) => acc + (sensor.getValue() as number),
+      0,
     );
     return totalSoilMoisture / Math.max(1, soilMoistureSensors.length);
   }

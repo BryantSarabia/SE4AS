@@ -32,7 +32,10 @@ export interface Sensor<T> {
   activate(): void;
   deactivate(): OnMqttMessage;
   destroy(): void;
-  getData(): Pick<Sensor<any>, "id" | "value" | "unit" | "zoneId" | "fieldId">;
+  getData(): Pick<
+    Sensor<unknown>,
+    "id" | "value" | "unit" | "zoneId" | "fieldId"
+  >;
   getValue(): T;
   generateValue(): T;
   updateValue(value: T): void;
@@ -40,8 +43,7 @@ export interface Sensor<T> {
   connectToMqtt(): void;
 }
 
-export interface CreateSensor<T>
-  extends Omit<
-    Sensor<T>,
-    "topic" | "publishTopic" | "activationTopic" | "deactivationTopic"
-  > {}
+export type CreateSensor<T> = Omit<
+  Sensor<T>,
+  "topic" | "publishTopic" | "activationTopic" | "deactivationTopic"
+>;
