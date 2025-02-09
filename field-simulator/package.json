@@ -29,5 +29,10 @@
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "mqtt": "^5.10.3",
+    "random": "^5.1.1",
+    "winston": "^3.17.0"
   }
 }
