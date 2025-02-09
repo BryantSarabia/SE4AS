@@ -142,4 +142,3 @@ mosquitto/log
 
 knowledge/*
 !knowledge/.env
-!knowledge/config
