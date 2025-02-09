@@ -1,6 +1,6 @@
-import { Logger as LoggerInterface } from "@/data-access/interfaces";
-import logger from "@/lib/logger";
 import { Logger as WinstonLogger } from "winston";
+import { Logger as LoggerInterface } from "../../data-access/interfaces";
+import logger from "../../lib/logger";
 
 export class Logger implements LoggerInterface {
   private logger: WinstonLogger;

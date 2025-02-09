@@ -1,5 +1,5 @@
-import { BROKER_URL } from "@/config";
 import { MqttClient } from "mqtt/*";
+import { BROKER_URL } from "../../config";
 import { createMqttClient } from "../clients";
 import { ActuatorType } from "../enums";
 import { Actuator, ActuatorCreate, Logger, OnMqttMessage } from "../interfaces";

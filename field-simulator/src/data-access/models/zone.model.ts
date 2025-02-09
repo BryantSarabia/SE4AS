@@ -2,7 +2,7 @@ import {
   Field,
   ZoneCreate,
   Zone as ZoneInterface,
-} from "@/data-access/interfaces";
+} from "../../data-access/interfaces";
 
 export class Zone implements ZoneInterface {
   id: number;

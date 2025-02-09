@@ -1,5 +1,5 @@
-import { BROKER_URL } from "@/config/config";
 import { MqttClient } from "mqtt/*";
+import { BROKER_URL } from "../../config/config";
 import { createMqttClient } from "../clients";
 import { MeasurementUnit, SensorType } from "../enums";
 import { OnMqttMessage, Sensor, SensorCreate } from "../interfaces";
@@ -56,12 +56,11 @@ export abstract class BaseSensor<T> implements Sensor<T> {
 
   initialize(): void {
     this.connectToMqtt();
-    if (this.mqttClient.connected) {
-      this.mqttClient.subscribe(this.deactivationTopic);
-      this.mqttClient.on("message", this.deactivate.bind(this));
-      this.mqttClient.publish(this.activationTopic, "");
-      this.simulate();
-    }
+    this.mqttClient.subscribe(this.deactivationTopic);
+    this.mqttClient.on("message", this.deactivate.bind(this));
+    this.mqttClient.publish(this.activationTopic, "");
+    this.simulate();
+    this.logger.info(`Sensor ${this.id} with type ${this.type} initialized`);
   }
 
   connectToMqtt(): void {

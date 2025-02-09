@@ -48,6 +48,9 @@ services:
     build: ./field-simulator
     container_name: FIELD_SIMULATOR
     restart: always
+    volumes:
+      - ./field-simulator/combined.log:/app/combined.log
+      - ./field-simulator/error.log:/app/error.log
     environment:
       - MQTT_BROKER=mqtt://mosquitto:1883
     networks:

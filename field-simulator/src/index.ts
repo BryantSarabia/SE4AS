@@ -12,6 +12,7 @@ function initApp() {
       ...zone,
       id: createId(),
     });
+    logger.info(`Zone ${zoneObj.name} created`);
     for (const field of zone.fields) {
       const fieldObj = new Field({
         ...field,
@@ -27,6 +28,7 @@ function initApp() {
           logger,
         });
         fieldObj.addSensor(sensorObj);
+        logger.info(`Sensor ${sensorObj.id} created`);
       }
       for (const actuator of field.actuators) {
         const actuatorObj = ActuatorFactory.create({
@@ -37,7 +39,10 @@ function initApp() {
           logger,
         });
         fieldObj.addActuator(actuatorObj);
+        logger.info(`Actuator ${actuatorObj.id} created`);
       }
+      zoneObj.addField(fieldObj);
+      logger.info(`Field ${fieldObj.name} created`);
     }
   }
 }

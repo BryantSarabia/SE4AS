@@ -3,7 +3,7 @@ import {
   FieldCreate,
   Field as FieldInterface,
   Sensor,
-} from "@/data-access/interfaces";
+} from "../../data-access/interfaces";
 import { ActuatorType, SensorType } from "../enums";
 
 export class Field implements FieldInterface {

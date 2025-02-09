@@ -1,5 +1,5 @@
-import { ActuatorType } from "@/data-access/enums";
 import { MqttClient } from "mqtt/*";
+import { ActuatorType } from "../../data-access/enums";
 import { Field } from "./field.interface";
 import { Logger } from "./logger.interface";
 import { Zone } from "./zone.interface";
