@@ -111,6 +111,9 @@
     "include": [
       "src",
       "package.json"
+    ],
+    "exclude": [
+      "src/**/*.spec.ts",
     ]
   }
 }
