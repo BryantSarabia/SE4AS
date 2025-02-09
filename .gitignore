@@ -138,3 +138,8 @@ mongodb/*
 
 # mosquitto
 mosquitto/log
+
+
+influxd.sqlite
+influxd.bolt
+engine
