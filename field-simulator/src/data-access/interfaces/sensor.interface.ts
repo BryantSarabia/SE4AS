@@ -5,7 +5,7 @@ import { Field } from "./field.interface";
 import { OnMqttMessage } from "./mqtt.interface";
 import { Zone } from "./zone.interface";
 
-export interface Sensor<T> {
+export interface Sensor<T = unknown> {
   id: number;
   type: SensorType;
   value: T;
@@ -32,10 +32,7 @@ export interface Sensor<T> {
   activate(): void;
   deactivate(): OnMqttMessage;
   destroy(): void;
-  getData(): Pick<
-    Sensor<unknown>,
-    "id" | "value" | "unit" | "zoneId" | "fieldId"
-  >;
+  getData(): Pick<Sensor, "id" | "value" | "unit" | "zoneId" | "fieldId">;
   getValue(): T;
   generateValue(): T;
   updateValue(value: T): void;
@@ -43,7 +40,14 @@ export interface Sensor<T> {
   connectToMqtt(): void;
 }
 
-export type CreateSensor<T> = Omit<
+export type SensorCreate<T> = Pick<
   Sensor<T>,
-  "topic" | "publishTopic" | "activationTopic" | "deactivationTopic"
+  | "id"
+  | "value"
+  | "min"
+  | "max"
+  | "zoneId"
+  | "fieldId"
+  | "logger"
+  | "simulationInterval"
 >;

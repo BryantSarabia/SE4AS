@@ -10,17 +10,17 @@ export interface Field {
   temperature: number;
   humidity: number;
   light: number;
-  sensors: Sensor<unknown>[];
+  sensors: Sensor[];
   actuators: Actuator[];
   zoneId: Zone["id"];
 
-  getSensorById(id: number): Sensor<unknown> | undefined;
+  getSensorById(id: number): Sensor | undefined;
   getActuatorById(id: number): Actuator | undefined;
-  getSensorsByType(type: SensorType): Sensor<unknown>[];
+  getSensorsByType(type: SensorType): Sensor[];
   getActuatorsByType(type: ActuatorType): Actuator[];
-  addSensor(sensor: Sensor<unknown>): void;
+  addSensor(sensor: Sensor): void;
   addActuator(actuator: Actuator): void;
-  deleteSensor(id: Sensor<unknown>["id"]): void;
+  deleteSensor(id: Sensor["id"]): void;
   deleteActuator(id: Actuator["id"]): void;
   getTemperature(): number;
   getHumidity(): number;
@@ -32,3 +32,5 @@ export interface Field {
   setSoilMoisture(soilMoisture: number): void;
   destroy(): void;
 }
+
+export type FieldCreate = Pick<Field, "id" | "name" | "zoneId">;

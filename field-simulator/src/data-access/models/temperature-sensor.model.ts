@@ -1,14 +1,13 @@
 import random from "random";
 import { MeasurementUnit, SensorType } from "../enums";
-import { CreateSensor } from "../interfaces";
+import { SensorCreate } from "../interfaces";
 import { BaseSensor } from "./base-sensor.model";
 
 export class TemperatureSensor extends BaseSensor<number> {
-  constructor(sensor: CreateSensor<number>) {
+  constructor(sensor: SensorCreate<number>) {
     const type = SensorType.TEMPERATURE;
     const unit = MeasurementUnit.TEMPERATURE;
-    const simulationInterval = 5 * 60 * 1000; // 5 minutes
-    super({ ...sensor, type, unit, simulationInterval });
+    super({ ...sensor, type, unit });
   }
 
   generateValue(): number {

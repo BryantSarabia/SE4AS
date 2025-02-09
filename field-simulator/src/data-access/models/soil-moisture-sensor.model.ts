@@ -1,14 +1,13 @@
 import random from "random";
 import { MeasurementUnit, SensorType } from "../enums";
-import { CreateSensor } from "../interfaces";
+import { SensorCreate } from "../interfaces";
 import { BaseSensor } from "./base-sensor.model";
 
 export class SoilMoistureSensor extends BaseSensor<number> {
-  constructor(sensor: CreateSensor<number>) {
+  constructor(sensor: SensorCreate<number>) {
     const type = SensorType.SOIL_MOISTURE;
     const unit = MeasurementUnit.SOIL_MOISTURE;
-    const simulationInterval = 1 * 60 * 1000; // 1 minute
-    super({ ...sensor, type, unit, simulationInterval });
+    super({ ...sensor, type, unit });
   }
 
   generateValue(): number {

@@ -2,7 +2,7 @@ import { BROKER_URL } from "@/config/config";
 import { MqttClient } from "mqtt/*";
 import { createMqttClient } from "../clients";
 import { MeasurementUnit, SensorType } from "../enums";
-import { CreateSensor, OnMqttMessage, Sensor } from "../interfaces";
+import { OnMqttMessage, Sensor, SensorCreate } from "../interfaces";
 import { Logger } from "./logger.model";
 
 export abstract class BaseSensor<T> implements Sensor<T> {
@@ -34,7 +34,7 @@ export abstract class BaseSensor<T> implements Sensor<T> {
     fieldId,
     simulationInterval,
     logger,
-  }: CreateSensor<T>) {
+  }: SensorCreate<T> & Pick<Sensor<T>, "type" | "unit">) {
     this.id = id;
     this.type = type;
     this.value = value;
@@ -49,16 +49,19 @@ export abstract class BaseSensor<T> implements Sensor<T> {
     this.publishTopic = this.topic;
     this.activationTopic = `${this.topic}/activate`;
     this.deactivationTopic = `${this.topic}/deactivate`;
-    this.connectToMqtt();
+    this.initialize();
   }
 
   abstract generateValue(): T;
 
   initialize(): void {
-    this.mqttClient.subscribe(this.deactivationTopic);
-    this.mqttClient.on("message", this.deactivate.bind(this));
-    this.mqttClient.publish(this.activationTopic, "");
-    this.simulate();
+    this.connectToMqtt();
+    if (this.mqttClient.connected) {
+      this.mqttClient.subscribe(this.deactivationTopic);
+      this.mqttClient.on("message", this.deactivate.bind(this));
+      this.mqttClient.publish(this.activationTopic, "");
+      this.simulate();
+    }
   }
 
   connectToMqtt(): void {
@@ -85,12 +88,12 @@ export abstract class BaseSensor<T> implements Sensor<T> {
       const value = this.getValue();
       const data = JSON.stringify({ value });
       this.logger.info(
-        `Sensor ${this.id} with type ${this.type} sending value: ${value}`,
+        `Sensor ${this.id} with type ${this.type} sending value: ${value}`
       );
       this.mqttClient.publish(this.publishTopic, data); // zone/:zoneId/field/:fieldId/sensor/:sensorId/:sensorType
     } catch (error) {
       this.logger.error(
-        `Error sending data from sensor ${this.id} with type ${this.type}: ${error}`,
+        `Error sending data from sensor ${this.id} with type ${this.type}: ${error}`
       );
     }
   }

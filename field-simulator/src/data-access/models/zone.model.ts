@@ -1,13 +1,21 @@
-import { Field, Zone as ZoneInterface } from "@/data-access/interfaces";
+import {
+  Field,
+  ZoneCreate,
+  Zone as ZoneInterface,
+} from "@/data-access/interfaces";
 
 export class Zone implements ZoneInterface {
   id: number;
   name: string;
+  latitude: number;
+  longitude: number;
   fields: Field[] = [];
 
-  constructor({ id, name }: ZoneInterface) {
+  constructor({ id, name, latitude, longitude }: ZoneCreate) {
     this.id = id;
     this.name = name;
+    this.latitude = latitude;
+    this.longitude = longitude;
   }
 
   getFields(): Field[] {
