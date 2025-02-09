@@ -140,6 +140,6 @@ mongodb/*
 mosquitto/log
 
 
-influxd.sqlite
-influxd.bolt
-engine
+knowledge/*
+!knowledge/.env
+!knowledge/config
