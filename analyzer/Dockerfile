@@ -13,7 +13,7 @@ RUN pip install -Ur requirements.txt
 FROM python:3.9-slim as runner
 WORKDIR /app/
 COPY --from=compiler /opt/venv /opt/venv
-
+COPY ../shared/*.py /src
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY . /app/
