@@ -142,3 +142,4 @@ mosquitto/log
 
 knowledge/*
 !knowledge/.env
+env/
