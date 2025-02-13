@@ -28,7 +28,7 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
     env_file:
       - ./grafana/.env
-      - ./influxdb/.env
+      - ./knowledge/.env
     networks:
       - iot
     depends_on:
@@ -136,6 +136,17 @@ services:
     build: ./initializer
     container_name: INITIALIZER
     restart: "no"
+    env_file:
+      - ./mosquitto/.env
+      - ./backend/.env
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
+  sensor-simulator:
+    build: ./sensor-simulator
+    container_name: SENSOR_SIMULATOR
+    restart: always
     env_file:
       - ./mosquitto/.env
       - ./backend/.env
