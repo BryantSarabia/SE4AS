@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 
 import pymongo
 from src.zones import ZoneService
@@ -18,6 +19,7 @@ def initialize():
     zones = zone_service.get_zones()
     if zones:
         logger.info("MongoDB already initialized.")
+        sys.exit(0)
         return
 
     with open('zones.json') as f:
@@ -25,6 +27,8 @@ def initialize():
         for zone_data in zones_data:
           zone_service.add_zone(zone_data)
     logger.info("MongoDB initialized with data.")
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     initialize()

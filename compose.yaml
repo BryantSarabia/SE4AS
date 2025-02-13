@@ -132,5 +132,16 @@ services:
       - iot
     depends_on:
       - mosquitto
+  initializer:
+    build: ./initializer
+    container_name: INITIALIZER
+    restart: "no"
+    env_file:
+      - ./mosquitto/.env
+      - ./backend/.env
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
 networks:
   iot:
