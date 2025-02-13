@@ -93,8 +93,12 @@ class Analyzer:
         field_id = parts[3]
         field = self.zones[zone_id].get_field(field_id)
         sensor = field.get_sensor(payload['sensor_id'])
+        if not sensor:
+            return
         sensor.set_value(payload['value'])
-        self.analyze_data(zone_id, field_id)
+        analysis_result = self.analyze_data(zone_id, field_id)
+        if analysis_result:
+            self._publish_analysis_result(zone_id, field_id, analysis_result)
 
     def analyze_data(self, zone_id: str, field_id: str) -> Optional[dict]:
         try:

@@ -30,5 +30,11 @@ class Field:
             return sum(values) / len(values) if values else None
         return None
     
+    def get_sensor(self, sensor_id: str):
+        for sensor_dict in self.sensors.values():
+            if sensor_id in sensor_dict:
+                return sensor_dict[sensor_id]
+        return None
+    
     def get_all_sensors(self):
         return [sensor for sensor_dict in self.sensors.values() for sensor in sensor_dict.values()]
