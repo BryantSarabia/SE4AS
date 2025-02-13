@@ -51,18 +51,14 @@ class Analyzer:
 
     def _load_zones(self) -> None:
         try:
-            zones_data = self.zone_service.get_zones()
-            for zone_data in zones_data:
-                self._process_zone_data(zone_data)
+            zones = self.zone_service.get_zones()
+            for zone in zones:
+                self._process_zone(zone)
         except Exception as e:
             logger.error(f"Failed to load zones: {e}")
 
-    def _process_zone_data(self, zone_data: dict) -> None:
-        zone = Zone(zone_data['zone_id'])
-        for field_data in zone_data['fields']:
-            field = self._create_field(field_data)
-            zone.add_field(field)
-        self.zones[zone_data['zone_id']] = zone
+    def _process_zone_data(self, zone: Zone) -> None:
+        self.zones[zone['zone_id']] = zone
 
     def _create_field(self, field_data: dict) -> Field:
         field = Field(

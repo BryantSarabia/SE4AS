@@ -2,8 +2,10 @@ import logging
 from typing import Dict, List, Optional
 
 import requests
+from actuator import ActuatorFactory
 from field import Field
 from requests.exceptions import RequestException
+from sensor import SensorFactory
 
 logging.basicConfig(
     level=logging.INFO,
@@ -65,6 +67,12 @@ class ZoneService:
                         field_data['latitude'],
                         field_data['longitude']
                     )
+                    for sensor_data in field_data.get('sensors', []):
+                        sensor = SensorFactory.create_sensor(**sensor_data)
+                        field.add_sensor(sensor)
+                    for actuator_data in field_data.get('actuators', []):
+                        actuator = ActuatorFactory.create_actuator(**actuator_data)
+                        field.add_actuator(actuator)
                     zone.add_field(field)
                 zones.append(zone)
             return zones
