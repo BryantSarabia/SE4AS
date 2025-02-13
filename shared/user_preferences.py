@@ -1,35 +1,82 @@
+import logging
+from typing import Any, Dict, Optional
+
 import requests
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class UserPreferences:
     def __init__(self, backend_url: str):
-        self.backend_url = backend_url
+        self.backend_url = backend_url.rstrip('/')
+        self.preferences: Optional[Dict[str, Any]] = None
 
-    def get(self):
-        response = requests.get(f"{self.backend_url}/preferences")
-        if response.status_code == 200:
+    def get(self) -> Optional[Dict[str, Any]]:
+        try:
+            response = requests.get(f"{self.backend_url}/preferences")
+            response.raise_for_status()
             self.preferences = response.json()
-        else:
-            print(f"Failed to fetch preferences: {response.status_code}")
-            return None
+            return self.preferences
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error occurred: {e}, Status code: {e.response.status_code}")
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Error connecting to backend: {e}")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error making request: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")
+        return None
 
-    def create(self, preferences):
-        response = requests.post(f"{self.backend_url}/preferences", json=preferences)
-        if response.status_code == 201:
-            self.preferences = preferences
-        else:
-            print(f"Failed to create preferences: {response.status_code}")
+    def create(self, preferences: Dict[str, Any]) -> bool:
+        try:
+            response = requests.post(f"{self.backend_url}/preferences", json=preferences)
+            response.raise_for_status()
+            if response.status_code == 201:
+                self.preferences = preferences
+                return True
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error occurred: {e}, Status code: {e.response.status_code}")
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Error connecting to backend: {e}")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error making request: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")
+        return False
 
-    def update(self, preferences):
-        response = requests.put(f"{self.backend_url}/preferences", json=preferences)
-        if response.status_code == 200:
-            self.preferences = preferences
-        else:
-            print(f"Failed to update preferences: {response.status_code}")
+    def update(self, preferences: Dict[str, Any]) -> bool:
+        try:
+            response = requests.put(f"{self.backend_url}/preferences", json=preferences)
+            response.raise_for_status()
+            if response.status_code == 200:
+                self.preferences = preferences
+                return True
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error occurred: {e}, Status code: {e.response.status_code}")
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Error connecting to backend: {e}")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error making request: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")
+        return False
 
-    def delete(self):
-        response = requests.delete(f"{self.backend_url}/preferences")
-        if response.status_code == 204:
-            self.preferences = {}
-        else:
-            print(f"Failed to delete preferences: {response.status_code}")
+    def delete(self) -> bool:
+        try:
+            response = requests.delete(f"{self.backend_url}/preferences")
+            response.raise_for_status()
+            if response.status_code == 204:
+                self.preferences = {}
+                return True
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error occurred: {e}, Status code: {e.response.status_code}")
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Error connecting to backend: {e}")
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error making request: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")
+        return False
