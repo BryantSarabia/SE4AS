@@ -28,7 +28,7 @@ class WeatherFetcher:
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_weather(self, lat, lon):
         return self.fetch_weather(lat, lon)
-    
+        
     @cached(cache=TTLCache(maxsize=1024, ttl=600))
     def get_temperature(self, lat, lon):
         data = self.get_weather(lat, lon)

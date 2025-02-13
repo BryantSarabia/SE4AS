@@ -4,10 +4,8 @@ from sensor import Sensor, SensorType
 
 class Field:
 
-    def __init__(self, field_id: str, latitude: float, longitude: float):
+    def __init__(self, field_id: str):
         self.field_id = field_id
-        self.latitude = latitude
-        self.longitude = longitude
         self.sensors: dict[str, dict[str, Sensor]]  = {}
         self.actuators: dict[str, dict[str, Actuator]] = {}
 
@@ -24,8 +22,6 @@ class Field:
         if sensor.sensor_type not in self.sensors:
             self.sensors[sensor.sensor_type] = []
         self.sensors[sensor.sensor_type].update({sensor.sensor_id: sensor})
-
-    
 
     def get_average_sensor_value(self, sensor_type: SensorType):
         if sensor_type in self.sensors:

@@ -14,17 +14,26 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class Zone:
-    def __init__(self, zone_id: str):
+    def __init__(self, zone_id: str, latitude: float, longitude: float, soil_moisture: float):
         self.zone_id = zone_id
+        self.latitude = latitude
+        self.longitude = longitude
+        self.soil_moisture = soil_moisture
         self.fields: Dict[str, Field] = {}
 
     def add_field(self, field: Field) -> None:
         self.fields[field.field_id] = field
         logger.info(f"Added field {field.field_id} to zone {self.zone_id}")
 
+    def get_field(self, field_id: str) -> Optional[Field]:
+        return self.fields.get(field_id)
+
     def to_dict(self) -> dict:
         return {
             "zone_id": self.zone_id,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "soil_moisture": self.soil_moisture,
             "fields": [field.to_dict() for field in self.fields.values()]
         }
 
@@ -99,9 +108,7 @@ class ZoneService:
         zone = Zone(zone_data['zone_id'])
         for field_data in zone_data.get('fields', []):
             field = Field(
-                field_data['field_id'],
-                field_data['latitude'],
-                field_data['longitude']
+                field_data['field_id']
             )
             for sensor_data in field_data.get('sensors', []):
                 sensor = SensorFactory.create_sensor(**sensor_data)

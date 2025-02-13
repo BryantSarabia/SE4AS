@@ -74,9 +74,7 @@ class Analyzer:
         sensor_type = SensorType(sensor_data['sensor_type'])
         sensor = SensorFactory.create_sensor(
             sensor_type,
-            **sensor_data,
-            latitude=field.latitude,
-            longitude=field.longitude
+            **sensor_data
         )
         field.add_sensor(sensor)
 
@@ -92,19 +90,29 @@ class Analyzer:
 
     def analyze_data(self, zone_id: str, field_id: str) -> Optional[dict]:
         try:
-            field = self.zones[zone_id].fields[field_id]
+            zone = self.zones[zone_id]
+            field = zone.get_field(field_id)
             soil_moisture_avg = field.get_average_sensor_value(SensorType.SOIL_MOISTURE)
             
             if soil_moisture_avg is None:
                 return None
 
-            rain_prediction = self._is_rain_predicted(field.latitude, field.longitude)
+            rain_prediction = self._is_rain_predicted(zone.latitude, zone.longitude)
             self.moisture_threshold = self._get_moisture_threshold()
 
             return self._determine_irrigation_action(soil_moisture_avg, rain_prediction)
         except Exception as e:
             logger.error(f"Error analyzing data for zone {zone_id}, field {field_id}: {e}")
             return None
+    
+    def _is_rain_predicted(self, lat: float, lon: float) -> bool:
+        weather_data = self.weather_fetcher.get_weather(lat, lon)
+        if weather_data:
+            return any(
+                'rain' in weather['weather'][0]['description'].lower()
+                for weather in weather_data['list']
+            )
+        return False
 
     def _determine_irrigation_action(
         self, 
