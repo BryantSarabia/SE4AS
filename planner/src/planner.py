@@ -1,39 +1,120 @@
 import json
+import logging
+from typing import Dict, Optional, Tuple
 
+from config import Config
 from paho.mqtt import client as mqtt
 
-ANALYZER_OUTPUT_TOPIC_PREFIX = 'analyzer/'
-PLANNER_OUTPUT_TOPIC_PREFIX = 'planner/'
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class Planner:
-    def __init__(self, mqtt_broker_url):
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_message
-        broker_mqtt_port = mqtt_broker_url.split(":")[:-1]
-        self.mqtt_client.connect(mqtt_broker_url, broker_mqtt_port, 60)
-        self.mqtt_client.loop_forever()
+    def __init__(self, config: Config):
+        """Initialize the Planner with configuration."""
+        self.config = config
+        self._setup_mqtt_client()
 
-    def on_connect(self, client, userdata, flags, rc):
-        print(f"Connected to MQTT broker with result code {rc}")
-        client.subscribe(f"{ANALYZER_OUTPUT_TOPIC_PREFIX}#")
+    def _setup_mqtt_client(self) -> None:
+        """Set up and configure MQTT client."""
+        try:
+            self.mqtt_client = mqtt.Client()
+            self.mqtt_client.on_connect = self._on_connect
+            self.mqtt_client.on_message = self._on_message
+            
+            host, port = self._parse_mqtt_url(self.config.MQTT_BROKER_URL)
+            self.mqtt_client.connect(host, port, self.config.MQTT_KEEPALIVE)
+            
+            logger.info("MQTT client setup completed")
+        except Exception as e:
+            logger.error(f"Failed to setup MQTT client: {e}")
+            raise
 
-    def on_message(self, client, userdata, msg):
-        topic = msg.topic
-        payload = json.loads(msg.payload.decode())
-        action = payload['action']
-        reason = payload['reason']
+    @staticmethod
+    def _parse_mqtt_url(url: str) -> Tuple[str, int]:
+        """Parse MQTT broker URL into host and port."""
+        parts = url.split(":")
+        return parts[0], int(parts[1]) if len(parts) > 1 else 1883
 
-        parts = topic.split('/')
-        zone_id = parts[1]
-        field_id = parts[3]
+    def _on_connect(self, client, userdata, flags, rc: int) -> None:
+        """Handle MQTT connection event."""
+        if rc == 0:
+            logger.info("Connected to MQTT broker successfully")
+            topic = f"{self.config.ANALYZER_TOPIC_PREFIX}#"
+            client.subscribe(topic)
+            logger.info(f"Subscribed to topic: {topic}")
+        else:
+            logger.error(f"Failed to connect to MQTT broker with result code: {rc}")
 
-        if action == "trigger_irrigation":
-            plan = {"action": "start_irrigation", "reason": reason}
-        elif action == "stop_irrigation":
-            plan = {"action": "stop_irrigation", "reason": reason}
+    def _on_message(self, client, userdata, msg) -> None:
+        """Handle incoming MQTT messages."""
+        try:
+            topic = msg.topic
+            payload = json.loads(msg.payload.decode())
+            
+            zone_id, field_id = self._parse_topic(topic)
+            if not zone_id or not field_id:
+                logger.error(f"Invalid topic format: {topic}")
+                return
 
-        topic = f"{PLANNER_OUTPUT_TOPIC_PREFIX}{zone_id}/field/{field_id}/output"
-        client.publish(topic, json.dumps(plan))
-        print(f"Generated plan for {zone_id}/{field_id}: {plan}")
+            plan = self._generate_plan(payload)
+            if plan:
+                self._publish_plan(zone_id, field_id, plan)
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON payload received: {e}")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
 
+    def _parse_topic(self, topic: str) -> Tuple[Optional[str], Optional[str]]:
+        """Parse zone_id and field_id from topic."""
+        try:
+            parts = topic.split('/')
+            return parts[1], parts[3]
+        except IndexError:
+            return None, None
+
+    def _generate_plan(self, payload: Dict) -> Optional[Dict]:
+        """Generate a plan based on analyzer output."""
+        try:
+            action = payload.get('action')
+            reason = payload.get('reason')
+
+            if not action or not reason:
+                logger.error("Missing action or reason in payload")
+                return None
+
+            if action == "trigger_irrigation":
+                return {"action": "start_irrigation", "reason": reason}
+            elif action == "stop_irrigation":
+                return {"action": "stop_irrigation", "reason": reason}
+            else:
+                logger.warning(f"Unknown action received: {action}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error generating plan: {e}")
+            return None
+
+    def _publish_plan(self, zone_id: str, field_id: str, plan: Dict) -> None:
+        """Publish the generated plan."""
+        try:
+            topic = f"{self.config.PLANNER_TOPIC_PREFIX}{zone_id}/field/{field_id}/output"
+            self.mqtt_client.publish(topic, json.dumps(plan))
+            logger.info(f"Published plan for {zone_id}/{field_id}: {plan}")
+        except Exception as e:
+            logger.error(f"Error publishing plan: {e}")
+
+    def run(self) -> None:
+        """Start the planner service."""
+        try:
+            logger.info("Starting Planner service...")
+            self.mqtt_client.loop_forever()
+        except KeyboardInterrupt:
+            logger.info("Shutting down Planner service...")
+            self.mqtt_client.disconnect()
+        except Exception as e:
+            logger.error(f"Error in Planner service: {e}")
+            self.mqtt_client.disconnect()
