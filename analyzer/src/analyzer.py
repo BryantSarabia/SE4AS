@@ -149,7 +149,7 @@ class Analyzer:
         field_id: str,
         analysis_result: dict
     ) -> None:
-        topic = f"{self.config.ANALYZER_OUTPUT_TOPIC_PREFIX}{zone_id}/field/{field_id}"
+        topic = f"{self.config.ANALYZER_OUTPUT_TOPIC_PREFIX}/zone/{zone_id}/field/{field_id}"
         try:
             self.mqtt_client.publish(topic, json.dumps(analysis_result))
             logger.info(f"Analysis result for {zone_id}/{field_id}: {analysis_result}")
