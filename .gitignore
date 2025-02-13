@@ -135,6 +135,9 @@ influxdb/engine
 # mongodb
 mongodb/*
 !mongodb/.env
+!mongodb/.dockerignore
+!mongodb/Dockerfile
+!mongodb/README.Docker.md
 
 # mosquitto
 mosquitto/log
