@@ -5,11 +5,11 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-APP_PORT = os.getenv('APP_PORT', 5000)
+APP_PORT = os.getenv('BACKEND_PORT', 5000)
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/')
 MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', 'se4as')
-MONGO_COLLECTION_NAME = os.getenv('MONGO_COLLECTION_NAME', 'zones')
-PREFERENCES_COLLECTION_NAME = os.getenv('PREFERENCES_COLLECTION_NAME', 'preferences')
+MONGO_COLLECTION_NAME = os.getenv('MONGO_ZONE_COLLECTION_NAME', 'zones')
+PREFERENCES_COLLECTION_NAME = os.getenv('MONGO_PREFERENCES_COLLECTION_NAME', 'preferences')
 
 client = pymongo.MongoClient(MONGO_URI)
 db = client[MONGO_DB_NAME]

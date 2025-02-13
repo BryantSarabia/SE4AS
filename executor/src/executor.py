@@ -1,10 +1,7 @@
 import json
-import os
-import time
 
 from paho.mqtt import client as mqtt
 
-MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto')
 PLANNER_OUTPUT_TOPIC_PREFIX = 'planner/'
 IRRIGATION_COMMAND_TOPIC_PREFIX = 'irrigation/'
 
@@ -34,5 +31,3 @@ class Executor:
         client.publish(topic, action)
         print(f"Executed action for {zone_id}/{field_id}: {action}, Reason: {reason}")
 
-if __name__ == "__main__":
-    executor = Executor(MQTT_BROKER_URL)

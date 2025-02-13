@@ -39,9 +39,10 @@ services:
     restart: always
     volumes:
       - ./backend:/app
-    environment:
-      - BROKER_URL=mqtt://mosquitto:1883
-      - DEBUG=true
+    env_file:
+      - ./mosquitto/.env
+      - ./backend/.env
+      - ./mongodb/.env
     networks:
       - iot
     depends_on:
@@ -103,9 +104,10 @@ services:
     build: ./analyzer
     container_name: ANALYZER
     restart: always
-    environment:
-      - BROKER_URL=mqtt://mosquitto:1883
-      - DEBUG=true
+    env_file:
+      - ./mosquitto/.env
+      - ./backend/.env
+      - ./analyzer/.env
     networks:
       - iot
     depends_on:
@@ -114,9 +116,8 @@ services:
     build: ./planner
     container_name: PLANNER
     restart: always
-    environment:
-      - BROKER_URL=mqtt://mosquitto:1883
-      - DEBUG=true
+    env_file:
+      - ./mosquitto/.env
     networks:
       - iot
     depends_on:
@@ -125,9 +126,8 @@ services:
     build: ./executor
     container_name: EXECUTOR
     restart: always
-    environment:
-      - BROKER_URL=mqtt://mosquitto:1883
-      - DEBUG=true
+    env_file:
+      - ./mosquitto/.env
     networks:
       - iot
     depends_on:

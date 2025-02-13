@@ -3,7 +3,7 @@ import os
 from .src.analyzer import Analyzer
 from .src.user_preferences import UserPreferences
 
-MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto')
+MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto:1883')
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://backend:5000')
 
 
