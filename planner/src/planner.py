@@ -13,12 +13,10 @@ logger = logging.getLogger(__name__)
 
 class Planner:
     def __init__(self, config: Config):
-        """Initialize the Planner with configuration."""
         self.config = config
         self._setup_mqtt_client()
 
     def _setup_mqtt_client(self) -> None:
-        """Set up and configure MQTT client."""
         try:
             self.mqtt_client = mqtt.Client()
             self.mqtt_client.on_connect = self._on_connect
@@ -34,12 +32,10 @@ class Planner:
 
     @staticmethod
     def _parse_mqtt_url(url: str) -> Tuple[str, int]:
-        """Parse MQTT broker URL into host and port."""
         parts = url.split(":")
         return parts[0], int(parts[1]) if len(parts) > 1 else 1883
 
     def _on_connect(self, client, userdata, flags, rc: int) -> None:
-        """Handle MQTT connection event."""
         if rc == 0:
             logger.info("Connected to MQTT broker successfully")
             topic = f"{self.config.ANALYZER_TOPIC_PREFIX}/#"
@@ -49,7 +45,6 @@ class Planner:
             logger.error(f"Failed to connect to MQTT broker with result code: {rc}")
 
     def _on_message(self, client, userdata, msg) -> None:
-        """Handle incoming MQTT messages."""
         try:
             topic = msg.topic
             payload = json.loads(msg.payload.decode())
@@ -69,7 +64,6 @@ class Planner:
             logger.error(f"Error processing message: {e}")
 
     def _parse_topic(self, topic: str) -> Tuple[Optional[str], Optional[str]]:
-        """Parse zone_id and field_id from topic."""
         try:
             parts = topic.split('/')
             return parts[1], parts[3]
@@ -77,7 +71,6 @@ class Planner:
             return None, None
 
     def _generate_plan(self, payload: Dict) -> Optional[Dict]:
-        """Generate a plan based on analyzer output."""
         try:
             action = payload.get('action')
             reason = payload.get('reason')
@@ -99,7 +92,6 @@ class Planner:
             return None
 
     def _publish_plan(self, zone_id: str, field_id: str, plan: Dict) -> None:
-        """Publish the generated plan."""
         try:
             topic = f"{self.config.PLANNER_TOPIC_PREFIX}/zone/{zone_id}/field/{field_id}"
             self.mqtt_client.publish(topic, json.dumps(plan))
@@ -108,7 +100,6 @@ class Planner:
             logger.error(f"Error publishing plan: {e}")
 
     def run(self) -> None:
-        """Start the planner service."""
         try:
             logger.info("Starting Planner service...")
             self.mqtt_client.loop_forever()
