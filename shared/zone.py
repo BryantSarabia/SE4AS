@@ -60,20 +60,7 @@ class ZoneService:
 
             zones = []
             for zone_data in data:
-                zone = Zone(zone_data['zone_id'])
-                for field_data in zone_data.get('fields', []):
-                    field = Field(
-                        field_data['field_id'],
-                        field_data['latitude'],
-                        field_data['longitude']
-                    )
-                    for sensor_data in field_data.get('sensors', []):
-                        sensor = SensorFactory.create_sensor(**sensor_data)
-                        field.add_sensor(sensor)
-                    for actuator_data in field_data.get('actuators', []):
-                        actuator = ActuatorFactory.create_actuator(**actuator_data)
-                        field.add_actuator(actuator)
-                    zone.add_field(field)
+                zone = self._parse_zone(zone_data)
                 zones.append(zone)
             return zones
         except Exception as e:
@@ -102,15 +89,25 @@ class ZoneService:
             if not data:
                 return None
 
-            zone = Zone(data['zone_id'])
-            for field_data in data.get('fields', []):
-                field = Field(
-                    field_data['field_id'],
-                    field_data['latitude'],
-                    field_data['longitude']
-                )
-                zone.add_field(field)
+            zone = self._parse_zone(data)
             return zone
         except Exception as e:
             logger.error(f"Error fetching zone {zone_id}: {e}")
             return None
+        
+    def _parse_zone(self, zone_data: dict) -> Zone:
+        zone = Zone(zone_data['zone_id'])
+        for field_data in zone_data.get('fields', []):
+            field = Field(
+                field_data['field_id'],
+                field_data['latitude'],
+                field_data['longitude']
+            )
+            for sensor_data in field_data.get('sensors', []):
+                sensor = SensorFactory.create_sensor(**sensor_data)
+                field.add_sensor(sensor)
+            for actuator_data in field_data.get('actuators', []):
+                actuator = ActuatorFactory.create_actuator(**actuator_data)
+                field.add_actuator(actuator)
+            zone.add_field(field)
+        return zone
