@@ -1,111 +1,157 @@
 import json
-import os
+import logging
 from time import sleep
+from typing import Dict, Optional
 
 import paho.mqtt.client as mqtt
+from config import Config
 from field import Field
 from sensor import SensorFactory, SensorType
 from src.weather import WeatherFetcher
 from user_preferences import UserPreferences
 from zone import Zone, ZoneService
 
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', "")
-ANALYZER_OUTPUT_TOPIC_PREFIX = 'analyzer/'
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class Analyzer:
-    def __init__(self, mqtt_broker_url: str, backend_url: str, UserPreferences: UserPreferences):
-        self.user_preferences_service = UserPreferences(backend_url)
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_message
-        mqtt_broker_port = mqtt_broker_url.split(":")[1:]
-        self.mqtt_client.connect(mqtt_broker_url, mqtt_broker_port, 60)
-        self.mqtt_client.loop_start()
-        self.backend_url = backend_url
-        self.zone_service = ZoneService(backend_url)
-        self.zones = {}
-        self.weather_fetcher = WeatherFetcher(WEATHER_API_KEY)
-        self.moisture_threshold = self.get_moisture_threshold()
+    def __init__(self, config: Config):
+        self.config = config
+        self.user_preferences_service = UserPreferences(config.BACKEND_URL)
+        self._setup_mqtt_client()
+        self.zone_service = ZoneService(config.BACKEND_URL)
+        self.zones: Dict[str, Zone] = {}
+        self.weather_fetcher = WeatherFetcher(config.WEATHER_API_KEY)
+        self.moisture_threshold = self._get_moisture_threshold()
 
-    def on_connect(self, client, userdata, flags, rc):
-        print(f"Connected to MQTT broker with result code {rc}")
-        client.subscribe(f"zone/#")
-        self.load_zones()
+    def _setup_mqtt_client(self) -> None:
+        try:
+            self.mqtt_client = mqtt.Client()
+            self.mqtt_client.on_connect = self._on_connect
+            self.mqtt_client.on_message = self._on_message
+            host, port = self._parse_mqtt_url(self.config.MQTT_BROKER_URL)
+            self.mqtt_client.connect(host, port, self.config.MQTT_KEEPALIVE)
+            self.mqtt_client.loop_start()
+        except Exception as e:
+            logger.error(f"Failed to setup MQTT client: {e}")
+            raise
 
-    def load_zones(self):
-        zones_data = self.zone_service.get_zones()
-        for zone_data in zones_data:
-            zone = Zone(zone_data['zone_id'])
-            for field_data in zone_data['fields']:
-                field = Field(field_data['field_id'], field_data['latitude'], field_data['longitude'])
-                for sensor_data in field_data['sensors']:
-                    sensor_type = SensorType(sensor_data['sensor_type'])
-                    sensor = SensorFactory.create_sensor(sensor_type, **sensor_data, **field)
-                    field.add_sensor(sensor)
-                zone.add_field(field)
-            self.zones[zone_data['zone_id']] = zone
+    @staticmethod
+    def _parse_mqtt_url(url: str) -> tuple[str, int]:
+        parts = url.split(":")
+        return parts[0], int(parts[1]) if len(parts) > 1 else 1883
 
-    def on_message(self, client, userdata, msg):
-        topic = msg.topic
-        payload = json.loads(msg.payload.decode())
+    def _on_connect(self, client, userdata, flags, rc: int) -> None:
+        logger.info(f"Connected to MQTT broker with result code {rc}")
+        client.subscribe("zone/#")
+        self._load_zones()
 
-        if topic.startswith("zone/"):
-            # zone/zone_id/field/field_id/sensor/sensor_id/sensor_type/latitude/longitude 
-            _, zone_id, _, field_id, _, sensor_id, sensor_type, latitude, longitude = topic.split('/')
-            value = payload['value']
+    def _load_zones(self) -> None:
+        try:
+            zones_data = self.zone_service.get_zones()
+            for zone_data in zones_data:
+                self._process_zone_data(zone_data)
+        except Exception as e:
+            logger.error(f"Failed to load zones: {e}")
 
-            if zone_id not in self.zones:
-                created_zone = self.zone_service.create_zone({"zone_id": zone_id})
-                if not created_zone:
-                    return
-                self.zones[zone_id] = Zone(zone_id)
+    def _process_zone_data(self, zone_data: dict) -> None:
+        zone = Zone(zone_data['zone_id'])
+        for field_data in zone_data['fields']:
+            field = self._create_field(field_data)
+            zone.add_field(field)
+        self.zones[zone_data['zone_id']] = zone
 
-            if field_id not in self.zones[zone_id].fields:
-                created_field = self.zone_service.create_field(zone_id, {"field_id": field_id, "latitude": latitude, "longitude": longitude})
-                if created_field:
-                  self.zones[zone_id].fields[field_id] = Field(field_id, latitude, longitude)
-                else:
-                    print(f"Failed to create field {field_id} for zone {zone_id}")
+    def _create_field(self, field_data: dict) -> Field:
+        field = Field(
+            field_data['field_id'],
+            field_data['latitude'],
+            field_data['longitude']
+        )
+        for sensor_data in field_data['sensors']:
+            self._add_sensor_to_field(field, sensor_data)
+        return field
 
-            if sensor_id not in self.zones[zone_id].fields[field_id].sensors[sensor_type]:
-              sensor = SensorFactory.create_sensor(sensor_id, latitude, longitude, type=sensor_type)
-              sensor.value = value
-            else: 
-              sensor = self.zones[zone_id].fields[field_id].sensors[sensor_type][sensor_id]
-              sensor.value = value
+    def _add_sensor_to_field(self, field: Field, sensor_data: dict) -> None:
+        sensor_type = SensorType(sensor_data['sensor_type'])
+        sensor = SensorFactory.create_sensor(
+            sensor_type,
+            **sensor_data,
+            latitude=field.latitude,
+            longitude=field.longitude
+        )
+        field.add_sensor(sensor)
 
-    def analyze_data(self, zone_id, field_id):
-        field = self.zones[zone_id].fields[field_id]
-        soil_moisture_avg = field.get_average_sensor_value(SensorType.SOIL_MOISTURE)
-        latitude, longitude = (field.latitude, field.longitude)
-        if soil_moisture_avg is None:
+    def _on_message(self, client, userdata, msg) -> None:
+        try:
+            topic = msg.topic
+            payload = json.loads(msg.payload.decode())
+            self._process_message(topic, payload)
+        except json.JSONDecodeError:
+            logger.error(f"Invalid JSON payload received: {msg.payload}")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+
+    def analyze_data(self, zone_id: str, field_id: str) -> Optional[dict]:
+        try:
+            field = self.zones[zone_id].fields[field_id]
+            soil_moisture_avg = field.get_average_sensor_value(SensorType.SOIL_MOISTURE)
+            
+            if soil_moisture_avg is None:
+                return None
+
+            rain_prediction = self._is_rain_predicted(field.latitude, field.longitude)
+            self.moisture_threshold = self._get_moisture_threshold()
+
+            return self._determine_irrigation_action(soil_moisture_avg, rain_prediction)
+        except Exception as e:
+            logger.error(f"Error analyzing data for zone {zone_id}, field {field_id}: {e}")
             return None
-        rain_prediction = self.is_rain_predicted(latitude, longitude)
-        self.moisture_threshold = self.get_moisture_threshold()
+
+    def _determine_irrigation_action(
+        self, 
+        soil_moisture_avg: float, 
+        rain_prediction: bool
+    ) -> Optional[dict]:
         if soil_moisture_avg <= self.moisture_threshold and not rain_prediction:
-            return {"action": "trigger_irrigation", "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"}
+            return {
+                "action": "trigger_irrigation",
+                "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"
+            }
         elif soil_moisture_avg > self.moisture_threshold or rain_prediction:
-            return {"action": "stop_irrigation", "reason": "(Sml > Smt) ⋁ Rp"}
-
+            return {
+                "action": "stop_irrigation",
+                "reason": "(Sml > Smt) ⋁ Rp"
+            }
         return None
-    
-    def is_rain_predicted(self, latitude, longitude):
-        weather_data = self.weather_fetcher.get_weather(latitude, longitude)
-        if weather_data is None:
-            return False
-        return any(forecast['weather'][0]['main'] == 'Rain' for forecast in weather_data)
 
-    def run(self):
+    def run(self) -> None:
         while True:
-            for zone_id, zone in self.zones.items():
-                for field_id in zone.fields:
-                    analysis_result = self.analyze_data(zone_id, field_id)
-                    if analysis_result:
-                        topic = f"{ANALYZER_OUTPUT_TOPIC_PREFIX}{zone_id}/field/{field_id}"
-                        self.mqtt_client.publish(topic, json.dumps(analysis_result))
-                        print(f"Analysis result for {zone_id}/{field_id}: {analysis_result}")
-            sleep(60)  # Analyze every minute
-    
-    def get_moisture_threshold(self):
-        user_preferences = self.user_preferences_service.get()
-        return user_preferences['moisture_threshold']
+            try:
+                self._analyze_all_fields()
+                sleep(self.config.ANALYSIS_INTERVAL)
+            except Exception as e:
+                logger.error(f"Error in main analysis loop: {e}")
+                sleep(self.config.ANALYSIS_INTERVAL)
+
+    def _analyze_all_fields(self) -> None:
+        for zone_id, zone in self.zones.items():
+            for field_id in zone.fields:
+                analysis_result = self.analyze_data(zone_id, field_id)
+                if analysis_result:
+                    self._publish_analysis_result(zone_id, field_id, analysis_result)
+
+    def _publish_analysis_result(
+        self,
+        zone_id: str,
+        field_id: str,
+        analysis_result: dict
+    ) -> None:
+        topic = f"{self.config.ANALYZER_OUTPUT_TOPIC_PREFIX}{zone_id}/field/{field_id}"
+        try:
+            self.mqtt_client.publish(topic, json.dumps(analysis_result))
+            logger.info(f"Analysis result for {zone_id}/{field_id}: {analysis_result}")
+        except Exception as e:
+            logger.error(f"Failed to publish analysis result: {e}")
