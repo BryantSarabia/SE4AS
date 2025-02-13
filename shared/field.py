@@ -29,3 +29,6 @@ class Field:
             values = [sensor.value for sensor in sensors if sensor.value is not None]
             return sum(values) / len(values) if values else None
         return None
+    
+    def get_all_sensors(self):
+        return [sensor for sensor_dict in self.sensors.values() for sensor in sensor_dict.values()]

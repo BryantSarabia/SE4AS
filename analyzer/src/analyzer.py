@@ -21,11 +21,10 @@ class Analyzer:
     def __init__(self, config: Config):
         self.config = config
         self.user_preferences_service = UserPreferences(config.BACKEND_URL)
-        self._setup_mqtt_client()
         self.zone_service = ZoneService(config.BACKEND_URL)
         self.zones: Dict[str, Zone] = {}
         self.weather_fetcher = WeatherFetcher(config.WEATHER_API_KEY)
-        self.moisture_threshold = self._get_moisture_threshold()
+        self._setup_mqtt_client()
 
     def _setup_mqtt_client(self) -> None:
         try:
@@ -88,6 +87,15 @@ class Analyzer:
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 
+    def _process_message(self, topic: str, payload: dict) -> None:
+        parts = topic.split("/")
+        zone_id = parts[1]
+        field_id = parts[3]
+        field = self.zones[zone_id].get_field(field_id)
+        sensor = field.get_sensor(payload['sensor_id'])
+        sensor.set_value(payload['value'])
+        self.analyze_data(zone_id, field_id)
+
     def analyze_data(self, zone_id: str, field_id: str) -> Optional[dict]:
         try:
             zone = self.zones[zone_id]
@@ -98,9 +106,9 @@ class Analyzer:
                 return None
 
             rain_prediction = self._is_rain_predicted(zone.latitude, zone.longitude)
-            self.moisture_threshold = self._get_moisture_threshold()
+            soil_moisture_threshold = zone.soil_moisture_threshold
 
-            return self._determine_irrigation_action(soil_moisture_avg, rain_prediction)
+            return self._determine_irrigation_action(soil_moisture_threshold, soil_moisture_avg, rain_prediction)
         except Exception as e:
             logger.error(f"Error analyzing data for zone {zone_id}, field {field_id}: {e}")
             return None
@@ -116,15 +124,16 @@ class Analyzer:
 
     def _determine_irrigation_action(
         self, 
+        soil_moisture_threshold: float,
         soil_moisture_avg: float, 
         rain_prediction: bool
     ) -> Optional[dict]:
-        if soil_moisture_avg <= self.moisture_threshold and not rain_prediction:
+        if soil_moisture_avg <= soil_moisture_threshold and not rain_prediction:
             return {
                 "action": "trigger_irrigation",
                 "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"
             }
-        elif soil_moisture_avg > self.moisture_threshold or rain_prediction:
+        elif soil_moisture_avg > soil_moisture_threshold or rain_prediction:
             return {
                 "action": "stop_irrigation",
                 "reason": "(Sml > Smt) ⋁ Rp"
