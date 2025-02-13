@@ -1,4 +1,5 @@
 import json
+import logging
 import math
 import os
 from abc import ABC, abstractmethod
@@ -7,9 +8,15 @@ from time import sleep
 
 import paho.mqtt.client as mqtt
 
-ACTION_TOPIC = 'zone/{zone_id}/field/{field_id}/action/+'
+EXECUTOR = 'executor/zone/{zone_id}/field/{field_id}'
 CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/consumption'
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto:1883')
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 class ActionType(Enum):
     START_IRRIGATION = 'start_irrigation'
@@ -26,68 +33,156 @@ class Actuator(ABC):
         self.zone_id = zone_id
         self.field_id = field_id
         self.consumption = consumption
+        self.measurement = measurement
         self.status = 'off'
-        self.topic = ACTION_TOPIC.format(zone_id=zone_id, field_id=field_id)
-        self.consumption_topic = CONSUMPTION_TOPIC.format(zone_id=zone_id, field_id=field_id, actuator_id=actuator_id)
-        mqtt_broker_port = MQTT_BROKER_URL.split(":")[1:]
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_message
-        self.mqtt_client.connect(MQTT_BROKER_URL, mqtt_broker_port, 60)
-        self.mqtt_client.loop_start()
+        self._setup_mqtt_client()
+
+    def _setup_mqtt_client(self) -> None:
+        """Set up MQTT client with proper configuration."""
+        try:
+            self.topic = self.config.EXECUTOR_TOPIC.format(
+                zone_id=self.zone_id,
+                field_id=self.field_id
+            )
+            self.consumption_topic = self.config.CONSUMPTION_TOPIC.format(
+                zone_id=self.zone_id,
+                field_id=self.field_id,
+                actuator_id=self.actuator_id
+            )
+
+            self.mqtt_client = mqtt.Client()
+            self.mqtt_client.on_connect = self._on_connect
+            self.mqtt_client.on_message = self._on_message
+            
+            host, port = self._parse_mqtt_url(self.config.BROKER_URL)
+            self.mqtt_client.connect(host, port, self.config.KEEPALIVE)
+            self.mqtt_client.loop_start()
+            
+            logger.info(f"MQTT client setup completed for actuator {self.actuator_id}")
+        except Exception as e:
+            logger.error(f"Failed to setup MQTT client: {e}")
+            raise
+
+    def _parse_mqtt_url(url: str) -> tuple[str, int]:
+        parts = url.split(":")
+        return parts[0], int(parts[1]) if len(parts) > 1 else 1883
+
+    def _on_connect(self, client, userdata, flags, rc: int) -> None:
+        if rc == 0:
+            logger.info(f"Connected to MQTT broker for actuator {self.actuator_id}")
+            client.subscribe(self.topic)
+            logger.info(f"Subscribed to topic: {self.topic}")
+        else:
+            logger.error(f"Failed to connect to MQTT broker with result code: {rc}")
 
     @abstractmethod
     def on_message(self, client, userdata, msg):
         pass
 
-    def start(self, value):
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
-        self.status = 'on'
-        self.publishConsumption()
+    def start(self, value: float) -> None:
+        try:
+            if self.min_value is not None and self.max_value is not None:
+                self.value = math.max(self.min_value, math.min(self.max_value, value))
+            else:
+                self.value = value
+            self.status = 'on'
+            self._publish_consumption()
+            logger.info(f"Started actuator {self.actuator_id} with value {self.value}")
+        except Exception as e:
+            logger.error(f"Error starting actuator: {e}")
     
-    def stop(self):
-        self.value = None
-        self.status = 'off'
+    def stop(self) -> None:
+        try:
+            self.value = None
+            self.status = 'off'
+            logger.info(f"Stopped actuator {self.actuator_id}")
+        except Exception as e:
+            logger.error(f"Error stopping actuator: {e}")
     
     def on_connect(self, client, userdata):
         client.subscribe(self.topic)
     
-    def publishConsumption(self):
-        while self.status == 'on':
-          self.mqtt_client.publish(self.consumption_topic, json.dumps({'value': self.consumption, "measurement"}))
-          sleep(1)
+    def _publish_consumption(self) -> None:
+        try:
+            while self.status == 'on':
+                payload = {
+                    'value': self.consumption,
+                    'measurement': self.measurement
+                }
+                self.mqtt_client.publish(self.consumption_topic, json.dumps(payload))
+                sleep(1)
+        except Exception as e:
+            logger.error(f"Error publishing consumption: {e}")
     
 class Sprinkler(Actuator):
-    
-    def on_message(self, client, userdata, msg):
-        topic = msg.topic
-        payload = msg.payload.decode()
-        action = topic.split('/')[:-1]
-        if action == ActionType.START_IRRIGATION:
-            self.start(payload["value"])
-        elif action == ActionType.STOP_IRRIGATION:
-            self.stop()
+    def _on_message(self, client, userdata, msg) -> None:
+        try:
+            payload = json.loads(msg.payload.decode())
+            action = payload.get('action')
+            
+            if not action:
+                logger.warning("Received message without action")
+                return
+                
+            if action == ActionType.START_IRRIGATION.value:
+                value = payload.get('value')
+                if value is None:
+                    logger.error("Missing value for start_irrigation")
+                    return
+                self.start(float(value))
+            elif action == ActionType.STOP_IRRIGATION.value:
+                self.stop()
+            else:
+                logger.warning(f"Unknown action received: {action}")
+                
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON payload: {e}")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
 
-    
 class DripIrrigation(Actuator):
-
-    def on_message(self, client, userdata, msg):
-        topic = msg.topic
-        payload = msg.payload.decode()
-        action = topic.split('/')[:-1]
-        if action == ActionType.START_IRRIGATION:
-            self.start(payload["value"])
-        elif action == ActionType.STOP_IRRIGATION:
-            self.stop()
+    def _on_message(self, client, userdata, msg) -> None:
+        try:
+            payload = json.loads(msg.payload.decode())
+            action = payload.get('action')
+            
+            if not action:
+                logger.warning("Received message without action")
+                return
+                
+            if action == ActionType.START_IRRIGATION.value:
+                value = payload.get('value')
+                if value is None:
+                    logger.error("Missing value for start_irrigation")
+                    return
+                self.start(float(value))
+            elif action == ActionType.STOP_IRRIGATION.value:
+                self.stop()
+            else:
+                logger.warning(f"Unknown action received: {action}")
+                
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON payload: {e}")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
 
 class ActuatorFactory:
+
     ACTUATOR_MAP = {
         ActionType.START_IRRIGATION: Sprinkler,
         ActionType.STOP_IRRIGATION: DripIrrigation
     }
+
     @staticmethod
     def create_actuator(**kwargs):
-        actuator_type = kwargs.get('type', '')
-        if actuator_type not in ActuatorFactory.ACTUATOR_MAP:
-            raise ValueError(f"Invalid actuator type: {actuator_type}")
-        return ActuatorFactory.ACTUATOR_MAP[actuator_type](**kwargs)
+        try:
+            actuator_type = kwargs.get('type')
+            if not actuator_type or actuator_type not in ActuatorFactory.ACTUATOR_MAP:
+                raise ValueError(f"Invalid actuator type: {actuator_type}")
+                
+            actuator_class = ActuatorFactory.ACTUATOR_MAP[actuator_type]
+            return actuator_class(**kwargs)
+            
+        except Exception as e:
+            logger.error(f"Error creating actuator: {e}")
+            raise
