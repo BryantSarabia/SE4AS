@@ -24,29 +24,64 @@ class Sensor(ABC):
     def simulate_value(self):
         pass
 
+    def to_dict(self):
+        return {
+            'sensor_id': self.sensor_id,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'type': self.type.value,
+            'value': self.value,
+            'min_value': self.min_value,
+            'max_value': self.max_value
+        }
+
 class SoilMoistureSensor(Sensor):
-    def simulate_value(self):
-        value = self.value + random.uniform(-5, 5)
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
-        return self.value
 
-class LightSensor(Sensor):
-    def simulate_value(self):
-        value = self.value + random.uniform(-50, 50)
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
-        return self.value
-
-class HumiditySensor(Sensor):
     def simulate_value(self):
         value = self.value + random.uniform(-5, 5)
         self.value = math.max(self.min_value, math.min(self.max_value, value))
         return self.value
     
+    def to_dict(self):
+        return {
+            **super().to_dict(),
+        }
+
+class LightSensor(Sensor):
+
+    def simulate_value(self):
+        value = self.value + random.uniform(-50, 50)
+        self.value = math.max(self.min_value, math.min(self.max_value, value))
+        return self.value
+    
+    def to_dict(self):
+        return {
+            **super().to_dict(),
+        }
+
+class HumiditySensor(Sensor):
+
+    def simulate_value(self):
+        value = self.value + random.uniform(-5, 5)
+        self.value = math.max(self.min_value, math.min(self.max_value, value))
+        return self.value
+    
+    def to_dict(self):
+        return {
+            **super().to_dict(),
+        }
+    
 class TemperatureSensor(Sensor):
+
     def simulate_value(self):
         value = self.value + random.uniform(-1, 1)
         self.value = math.max(self.min_value, math.min(self.max_value, value))
         return self.value
+    
+    def to_dict(self):
+        return {
+            **super().to_dict(),
+        }
 
 class SensorFactory:
     SENSOR_MAP = {
