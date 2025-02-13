@@ -42,7 +42,7 @@ class Planner:
         """Handle MQTT connection event."""
         if rc == 0:
             logger.info("Connected to MQTT broker successfully")
-            topic = f"{self.config.ANALYZER_TOPIC_PREFIX}#"
+            topic = f"{self.config.ANALYZER_TOPIC_PREFIX}/#"
             client.subscribe(topic)
             logger.info(f"Subscribed to topic: {topic}")
         else:
@@ -101,7 +101,7 @@ class Planner:
     def _publish_plan(self, zone_id: str, field_id: str, plan: Dict) -> None:
         """Publish the generated plan."""
         try:
-            topic = f"{self.config.PLANNER_TOPIC_PREFIX}{zone_id}/field/{field_id}/output"
+            topic = f"{self.config.PLANNER_TOPIC_PREFIX}/zone/{zone_id}/field/{field_id}"
             self.mqtt_client.publish(topic, json.dumps(plan))
             logger.info(f"Published plan for {zone_id}/{field_id}: {plan}")
         except Exception as e:
