@@ -1,6 +1,61 @@
 version: "3.8"
 
 services:
+
+  # field-simulator:
+  #   build: ./field-simulator
+  #   container_name: FIELD_SIMULATOR
+  #   restart: always
+  #   volumes:
+  #     - ./field-simulator/combined.log:/app/combined.log
+  #     - ./field-simulator/error.log:/app/error.log
+  #   environment:
+  #     - BROKER_URL=mqtt://mosquitto:1883
+  #     - DEBUG=true
+  #   networks:
+  #     - iot
+  #   depends_on:
+  #     - mosquitto
+  grafana:
+    build: ./grafana
+    container_name: GRAFANA
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    env_file:
+      - ./grafana/.env
+      - ./influxdb/.env
+    networks:
+      - iot
+    depends_on:
+      - influxdb
+  backend:
+    build: ./backend
+    container_name: BACKEND
+    restart: always
+    volumes:
+      - ./backend:/app
+    environment:
+      - BROKER_URL=mqtt://mosquitto:1883
+      - DEBUG=true
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
+  mongodb:
+    build: ./mongodb
+    container_name: MONGODB
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodb:/data/db
+    networks:
+      - iot
   mosquitto:
     image: eclipse-mosquitto:2.0.20
     container_name: MOSQUITTO
@@ -44,20 +99,38 @@ services:
       retries: 3
     networks:
       - iot
-  # field-simulator:
-  #   build: ./field-simulator
-  #   container_name: FIELD_SIMULATOR
-  #   restart: always
-  #   volumes:
-  #     - ./field-simulator/combined.log:/app/combined.log
-  #     - ./field-simulator/error.log:/app/error.log
-  #   environment:
-  #     - BROKER_URL=mqtt://mosquitto:1883
-  #     - DEBUG=true
-  #   networks:
-  #     - iot
-  #   depends_on:
-  #     - mosquitto
-    
+  analyzer:
+    build: ./analyzer
+    container_name: ANALYZER
+    restart: always
+    environment:
+      - BROKER_URL=mqtt://mosquitto:1883
+      - DEBUG=true
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
+  planner:
+    build: ./planner
+    container_name: PLANNER
+    restart: always
+    environment:
+      - BROKER_URL=mqtt://mosquitto:1883
+      - DEBUG=true
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
+  executor:
+    build: ./executor
+    container_name: EXECUTOR
+    restart: always
+    environment:
+      - BROKER_URL=mqtt://mosquitto:1883
+      - DEBUG=true
+    networks:
+      - iot
+    depends_on:
+      - mosquitto
 networks:
   iot:
