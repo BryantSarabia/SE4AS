@@ -2,6 +2,7 @@ import logging
 import os
 
 import pymongo
+from bson import ObjectId
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -43,7 +44,8 @@ def get_zones():
 def create_zone():
     try:
         data = request.json
-        zones_collection.insert_one(data)
+        result = zones_collection.insert_one(data)
+        data['_id'] = str(result.inserted_id)
         return jsonify(data), 201
     except Exception as e:
         logger.error(f"Error creating zone: {e}")

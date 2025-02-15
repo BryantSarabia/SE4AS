@@ -58,7 +58,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./mongodb:/data/db
+      - ./mongodb/data:/data/db
     networks:
       - iot
   mosquitto:

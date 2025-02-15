@@ -5,16 +5,14 @@ from enum import Enum
 
 
 class SensorType(Enum):
-    soil_moisture_threshold = 'soil_moisture_threshold'
+    SOIL_MOISTURE = 'soil_moisture'
     LIGHT = 'light'
     HUMIDITY = 'humidity'
     TEMPERATURE = 'temperature'
 
 class Sensor(ABC):
-    def __init__(self, sensor_id: str, latitude: float, longitude: float, type: SensorType, value=None, min_value=None, max_value=None):
+    def __init__(self, sensor_id: str, type: SensorType, value=None, min_value=None, max_value=None):
         self.sensor_id = sensor_id
-        self.latitude = latitude
-        self.longitude = longitude
         self.value = value
         self.type = type
         self.min_value = min_value
@@ -85,10 +83,10 @@ class TemperatureSensor(Sensor):
 
 class SensorFactory:
     SENSOR_MAP = {
-        SensorType.soil_moisture_threshold: SoilMoistureSensor,
-        SensorType.LIGHT: LightSensor,
-        SensorType.HUMIDITY: HumiditySensor,
-        SensorType.TEMPERATURE: TemperatureSensor
+        SensorType.SOIL_MOISTURE.value: SoilMoistureSensor,
+        SensorType.LIGHT.value: LightSensor,
+        SensorType.HUMIDITY.value: HumiditySensor,
+        SensorType.TEMPERATURE.value: TemperatureSensor
     }
     @staticmethod
     def create_sensor(**kwargs):

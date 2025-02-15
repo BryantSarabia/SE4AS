@@ -19,18 +19,22 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+class ActuatorType(Enum):
+    SPRINKLER = 'sprinkler'
+    DRIP_IRRIGATION = 'drip_irrigation'
+
 class ActionType(Enum):
     START_IRRIGATION = 'start_irrigation'
     STOP_IRRIGATION = 'stop_irrigation'
 
 class Actuator(ABC):
 
-    def __init__(self, actuator_id: str, type: ActionType, zone_id: str, field_id: str, consumption: float, measurement: str):
+    def __init__(self, actuator_id: str, type: ActionType, zone_id: str, field_id: str, consumption: float, measurement: str, max_value, min_value):
         self.actuator_id = actuator_id
         self.type = type
         self.value = None
-        self.max_value = None
-        self.min_value = None
+        self.max_value = max_value
+        self.min_value = min_value
         self.zone_id = zone_id
         self.field_id = field_id
         self.consumption = consumption
@@ -41,11 +45,11 @@ class Actuator(ABC):
     def _setup_mqtt_client(self) -> None:
         """Set up MQTT client with proper configuration."""
         try:
-            self.topic = self.config.EXECUTOR_TOPIC.format(
+            self.topic = EXECUTOR.format(
                 zone_id=self.zone_id,
                 field_id=self.field_id
             )
-            self.consumption_topic = self.config.CONSUMPTION_TOPIC.format(
+            self.consumption_topic = CONSUMPTION_TOPIC.format(
                 zone_id=self.zone_id,
                 field_id=self.field_id,
                 actuator_id=self.actuator_id
@@ -55,8 +59,8 @@ class Actuator(ABC):
             self.mqtt_client.on_connect = self._on_connect
             self.mqtt_client.on_message = self._on_message
             
-            host, port = self._parse_mqtt_url(self.config.BROKER_URL)
-            self.mqtt_client.connect(host, port, self.config.KEEPALIVE)
+            host, port = self._parse_mqtt_url(MQTT_BROKER_URL)
+            self.mqtt_client.connect(host, port, 60)
             self.mqtt_client.loop_start()
             
             logger.info(f"MQTT client setup completed for actuator {self.actuator_id}")
@@ -79,7 +83,7 @@ class Actuator(ABC):
             logger.error(f"Failed to connect to MQTT broker with result code: {rc}")
 
     @abstractmethod
-    def on_message(self, client, userdata, msg):
+    def _on_message(self, client, userdata, msg):
         pass
 
     def start(self, value: float) -> None:
@@ -172,8 +176,8 @@ class DripIrrigation(Actuator):
 class ActuatorFactory:
 
     ACTUATOR_MAP = {
-        ActionType.START_IRRIGATION: Sprinkler,
-        ActionType.STOP_IRRIGATION: DripIrrigation
+        ActuatorType.SPRINKLER.value: Sprinkler,
+        ActuatorType.DRIP_IRRIGATION.value: DripIrrigation
     }
 
     @staticmethod

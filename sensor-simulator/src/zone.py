@@ -15,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class Zone:
-    def __init__(self, zone_id: str, latitude: float, longitude: float, soil_moisture_threshold: float):
+    def __init__(self, zone_id: str, latitude: float, longitude: float, soil_moisture_threshold: float, fields = None):
         self.zone_id = zone_id
         self.latitude = latitude
         self.longitude = longitude
@@ -106,16 +106,25 @@ class ZoneService:
             return None
         
     def _parse_zone(self, zone_data: dict) -> Zone:
-        zone = Zone(zone_data['zone_id'])
+        zone = Zone(zone_id=zone_data['zone_id'],latitude=zone_data['latitude'],longitude=zone_data['longitude'],soil_moisture_threshold=zone_data['soil_moisture_threshold'])
         for field_data in zone_data.get('fields', []):
-            field = Field(
-                field_data['field_id']
-            )
+            try:
+                field = Field(
+                    field_data['field_id']
+                )
+            except Exception as e:
+                logger.error(f"Error creating field ${field_data["field_id"]}: {e}")
             for sensor_data in field_data.get('sensors', []):
-                sensor = SensorFactory.create_sensor(**sensor_data)
-                field.add_sensor(sensor)
+                try:
+                    sensor = SensorFactory.create_sensor(**sensor_data)
+                    field.add_sensor(sensor)
+                except Exception as e:
+                    logger.error(f"Error creating sensor ${sensor_data["sensor_id"]}: {e}")
             for actuator_data in field_data.get('actuators', []):
-                actuator = ActuatorFactory.create_actuator(**actuator_data)
-                field.add_actuator(actuator)
+                try:
+                    actuator = ActuatorFactory.create_actuator(zone_id=zone.zone_id, field_id=field.field_id,**actuator_data)
+                    field.add_actuator(actuator)
+                except Exception as e:
+                    logger.error(f"Error creating actuator ${actuator_data["actuator_id"]}: {e}")
             zone.add_field(field)
         return zone

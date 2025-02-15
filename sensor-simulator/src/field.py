@@ -19,9 +19,14 @@ class Field:
         }
 
     def add_sensor(self, sensor: Sensor):
-        if sensor.sensor_type not in self.sensors:
-            self.sensors[sensor.sensor_type] = []
-        self.sensors[sensor.sensor_type].update({sensor.sensor_id: sensor})
+        if sensor.type not in self.sensors:
+            self.sensors[sensor.type] = {}
+        self.sensors[sensor.type].update({sensor.sensor_id: sensor})
+    
+    def add_actuator(self, actuator: Actuator):
+        if actuator.type not in self.actuators:
+            self.actuators[actuator.type] = {}
+        self.actuators[actuator.type].update({actuator.actuator_id: actuator})
 
     def get_average_sensor_value(self, sensor_type: SensorType):
         if sensor_type in self.sensors:

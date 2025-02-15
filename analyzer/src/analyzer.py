@@ -104,7 +104,7 @@ class Analyzer:
         try:
             zone = self.zones[zone_id]
             field = zone.get_field(field_id)
-            soil_moisture_threshold_avg = field.get_average_sensor_value(SensorType.soil_moisture_threshold)
+            soil_moisture_threshold_avg = field.get_average_sensor_value(SensorType.SOIL_MOISTURE.value)
             
             if soil_moisture_threshold_avg is None:
                 return None
