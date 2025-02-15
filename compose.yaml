@@ -1,5 +1,5 @@
 version: "3.8"
-
+name: se4as
 services:
 
   # field-simulator:
@@ -10,7 +10,7 @@ services:
   #     - ./field-simulator/combined.log:/app/combined.log
   #     - ./field-simulator/error.log:/app/error.log
   #   environment:
-  #     - BROKER_URL=mqtt://mosquitto:1883
+  #     - BROKER_URL=mosquitto:1883
   #     - DEBUG=true
   #   networks:
   #     - iot
@@ -45,6 +45,12 @@ services:
       - iot
     depends_on:
       - mosquitto
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      start_period: 10s
+      interval: 30s
+      timeout: 10s
+      retries: 3
   mongodb:
     build: ./mongodb
     container_name: MONGODB
@@ -60,7 +66,7 @@ services:
     container_name: MOSQUITTO
     restart: always
     ports:
-      - 1882:1883
+      - 1883:1883
       - 9001:9001
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
@@ -109,7 +115,10 @@ services:
     networks:
       - iot
     depends_on:
-      - mosquitto
+      mosquitto:
+          condition: service_started
+      backend:
+          condition: service_healthy
   planner:
     build: ./planner
     container_name: PLANNER
@@ -140,7 +149,8 @@ services:
     networks:
       - iot
     depends_on:
-      - mosquitto
+      backend:
+        condition: service_healthy
   sensor-simulator:
     build: ./sensor-simulator
     container_name: SENSOR_SIMULATOR
@@ -151,6 +161,9 @@ services:
     networks:
       - iot
     depends_on:
-      - mosquitto
+      mosquitto:
+        condition: service_started
+      backend:
+        condition: service_healthy
 networks:
   iot:

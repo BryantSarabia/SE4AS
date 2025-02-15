@@ -31,10 +31,11 @@ class Planner:
             logger.error(f"Failed to setup MQTT client: {e}")
             raise
 
-    @staticmethod
-    def _parse_mqtt_url(url: str) -> Tuple[str, int]:
+    def _parse_mqtt_url(self, url: str) -> Tuple[str, int]:
         parts = url.split(":")
-        return parts[0], int(parts[1]) if len(parts) > 1 else 1883
+        host = parts[0]
+        port = int(parts[1])
+        return host, port
 
     def _on_connect(self, client, userdata, flags, rc: int) -> None:
         if rc == 0:

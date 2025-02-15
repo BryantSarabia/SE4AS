@@ -5,8 +5,14 @@ import time
 import paho.mqtt.client as mqtt
 from src.zone import ZoneService
 
-MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto:1883')
+MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://backend:5000')
+
+def parse_mqtt_url(url):
+    parts = url.split(":")
+    host = parts[0]
+    port = int(parts[1]) if len(parts) > 1 else 1883
+    return host, port
 
 class SensorSimulator:
     def __init__(self, mqtt_broker_url, mqtt_port, backend_url):
@@ -43,6 +49,6 @@ class SensorSimulator:
             time.sleep(10)  # Simulate data every 10 seconds
 
 if __name__ == "__main__":
-    mqtt_port = int(MQTT_BROKER_URL.split(":")[-1])
-    simulator = SensorSimulator(MQTT_BROKER_URL, mqtt_port, BACKEND_URL)
+    host, port = parse_mqtt_url(MQTT_BROKER_URL)
+    simulator = SensorSimulator(host, port, BACKEND_URL)
     simulator.simulate_sensor_data()

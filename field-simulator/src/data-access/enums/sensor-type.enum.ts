@@ -1,5 +1,5 @@
 export enum SensorType {
-  SOIL_MOISTURE = "soil_moisture",
+  soil_moisture_threshold = "soil_moisture_threshold",
   TEMPERATURE = "temperature",
   HUMIDITY = "humidity",
   LIGHT = "light",

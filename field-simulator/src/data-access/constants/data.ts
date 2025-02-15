@@ -1,7 +1,7 @@
 import { ActuatorType, SensorType } from "../enums";
 import { ActuatorCreate, SensorCreate } from "../interfaces";
 
-const SOIL_MOISTURE_SAMPLING_INTERVAL = 5 * 60 * 1000; // 5 minutes
+const soil_moisture_threshold_SAMPLING_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const LIGHT_SAMPLING_INTERVAL = 60 * 1000; // 1 minute
 const HUMIDITY_SAMPLING_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const TEMPERATURE_SAMPLING_INTERVAL = 5 * 60 * 1000; // 5 minutes
@@ -13,39 +13,39 @@ type Sensor = Pick<
 
 const SENSORS: Sensor[] = [
   {
-    type: SensorType.SOIL_MOISTURE,
+    type: SensorType.soil_moisture_threshold,
     value: 0,
     min: 0,
     max: 100,
-    simulationInterval: SOIL_MOISTURE_SAMPLING_INTERVAL,
+    simulationInterval: soil_moisture_threshold_SAMPLING_INTERVAL,
   },
   {
-    type: SensorType.SOIL_MOISTURE,
+    type: SensorType.soil_moisture_threshold,
     value: 0,
     min: 0,
     max: 100,
-    simulationInterval: SOIL_MOISTURE_SAMPLING_INTERVAL,
+    simulationInterval: soil_moisture_threshold_SAMPLING_INTERVAL,
   },
   {
-    type: SensorType.SOIL_MOISTURE,
+    type: SensorType.soil_moisture_threshold,
     value: 0,
     min: 0,
     max: 100,
-    simulationInterval: SOIL_MOISTURE_SAMPLING_INTERVAL,
+    simulationInterval: soil_moisture_threshold_SAMPLING_INTERVAL,
   },
   {
-    type: SensorType.SOIL_MOISTURE,
+    type: SensorType.soil_moisture_threshold,
     value: 0,
     min: 0,
     max: 100,
-    simulationInterval: SOIL_MOISTURE_SAMPLING_INTERVAL,
+    simulationInterval: soil_moisture_threshold_SAMPLING_INTERVAL,
   },
   {
-    type: SensorType.SOIL_MOISTURE,
+    type: SensorType.soil_moisture_threshold,
     value: 0,
     min: 0,
     max: 100,
-    simulationInterval: SOIL_MOISTURE_SAMPLING_INTERVAL,
+    simulationInterval: soil_moisture_threshold_SAMPLING_INTERVAL,
   },
   {
     type: SensorType.LIGHT,

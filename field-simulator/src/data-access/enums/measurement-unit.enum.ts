@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 
 export enum MeasurementUnit {
-  SOIL_MOISTURE = "%",
+  soil_moisture_threshold = "%",
   TEMPERATURE = "°C",
   HUMIDITY = "%",
   LIGHT = "lux",

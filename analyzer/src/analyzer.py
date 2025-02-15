@@ -1,16 +1,15 @@
 import json
 import logging
 from time import sleep
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import paho.mqtt.client as mqtt
-from user_preferences import UserPreferences
-from weather import WeatherFetcher
-from zone import Zone, ZoneService
 
 from .config import Config
 from .field import Field
 from .sensor import SensorFactory, SensorType
+from .weather import WeatherFetcher
+from .zone import Zone, ZoneService
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,10 +20,10 @@ logger = logging.getLogger(__name__)
 class Analyzer:
     def __init__(self, config: Config):
         self.config = config
-        self.user_preferences_service = UserPreferences(config.BACKEND_URL)
         self.zone_service = ZoneService(config.BACKEND_URL)
         self.zones: Dict[str, Zone] = {}
         self.weather_fetcher = WeatherFetcher(config.WEATHER_API_KEY)
+        self._load_zones()
         self._setup_mqtt_client()
 
     def _setup_mqtt_client(self) -> None:
@@ -39,15 +38,15 @@ class Analyzer:
             logger.error(f"Failed to setup MQTT client: {e}")
             raise
 
-    @staticmethod
-    def _parse_mqtt_url(url: str) -> tuple[str, int]:
+    def _parse_mqtt_url(self, url: str) -> Tuple[str, int]:
         parts = url.split(":")
-        return parts[0], int(parts[1]) if len(parts) > 1 else 1883
+        host = parts[0]
+        port = int(parts[1])
+        return host, port
 
     def _on_connect(self, client, userdata, flags, rc: int) -> None:
         logger.info(f"Connected to MQTT broker with result code {rc}")
         client.subscribe("zone/#")
-        self._load_zones()
 
     def _load_zones(self) -> None:
         try:
@@ -105,15 +104,15 @@ class Analyzer:
         try:
             zone = self.zones[zone_id]
             field = zone.get_field(field_id)
-            soil_moisture_avg = field.get_average_sensor_value(SensorType.SOIL_MOISTURE)
+            soil_moisture_threshold_avg = field.get_average_sensor_value(SensorType.soil_moisture_threshold)
             
-            if soil_moisture_avg is None:
+            if soil_moisture_threshold_avg is None:
                 return None
 
             rain_prediction = self._is_rain_predicted(zone.latitude, zone.longitude)
             soil_moisture_threshold = zone.soil_moisture_threshold
 
-            return self._determine_irrigation_action(soil_moisture_threshold, soil_moisture_avg, rain_prediction)
+            return self._determine_irrigation_action(soil_moisture_threshold, soil_moisture_threshold_avg, rain_prediction)
         except Exception as e:
             logger.error(f"Error analyzing data for zone {zone_id}, field {field_id}: {e}")
             return None
@@ -130,15 +129,15 @@ class Analyzer:
     def _determine_irrigation_action(
         self, 
         soil_moisture_threshold: float,
-        soil_moisture_avg: float, 
+        soil_moisture_threshold_avg: float, 
         rain_prediction: bool
     ) -> Optional[dict]:
-        if soil_moisture_avg <= soil_moisture_threshold and not rain_prediction:
+        if soil_moisture_threshold_avg <= soil_moisture_threshold and not rain_prediction:
             return {
                 "action": "trigger_irrigation",
                 "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"
             }
-        elif soil_moisture_avg > soil_moisture_threshold or rain_prediction:
+        elif soil_moisture_threshold_avg > soil_moisture_threshold or rain_prediction:
             return {
                 "action": "stop_irrigation",
                 "reason": "(Sml > Smt) ⋁ Rp"

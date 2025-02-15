@@ -9,7 +9,7 @@ import { ActuatorType, SensorType } from "../enums";
 export class Field implements FieldInterface {
   id: number;
   name: string;
-  soil_moisture: number = 0;
+  soil_moisture_threshold: number = 0;
   temperature: number = 0;
   humidity: number = 0;
   light: number = 0;
@@ -95,7 +95,9 @@ export class Field implements FieldInterface {
   }
 
   getSoilMoisture(): number {
-    const soilMoistureSensors = this.getSensorsByType(SensorType.SOIL_MOISTURE);
+    const soilMoistureSensors = this.getSensorsByType(
+      SensorType.soil_moisture_threshold
+    );
     const totalSoilMoisture = soilMoistureSensors.reduce(
       (acc, sensor) => acc + (sensor.getValue() as number),
       0
@@ -116,7 +118,7 @@ export class Field implements FieldInterface {
   }
 
   setSoilMoisture(soilMoisture: number): void {
-    this.soil_moisture = soilMoisture;
+    this.soil_moisture_threshold = soilMoisture;
   }
 
   destroy(): void {

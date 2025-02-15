@@ -15,11 +15,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class Zone:
-    def __init__(self, zone_id: str, latitude: float, longitude: float, soil_moisture: float):
+    def __init__(self, zone_id: str, latitude: float, longitude: float, soil_moisture_threshold: float):
         self.zone_id = zone_id
         self.latitude = latitude
         self.longitude = longitude
-        self.soil_moisture = soil_moisture
+        self.soil_moisture_threshold = soil_moisture_threshold
         self.fields: Dict[str, Field] = {}
 
     def add_field(self, field: Field) -> None:
@@ -34,7 +34,7 @@ class Zone:
             "zone_id": self.zone_id,
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "soil_moisture": self.soil_moisture,
+            "soil_moisture_threshold": self.soil_moisture_threshold,
             "fields": [field.to_dict() for field in self.fields.values()]
         }
 

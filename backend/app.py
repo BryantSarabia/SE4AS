@@ -23,7 +23,13 @@ preferences_collection = db[PREFERENCES_COLLECTION_NAME]
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+
 # Routes
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "ok"})
+
 @app.route('/zones', methods=['GET'])
 def get_zones():
     try:
@@ -67,10 +73,10 @@ def create_field(zone_id):
         logger.error(f"Error creating field: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-@app.route('/preferences', methods=['GET'])
-def get_preferences():
+@app.route('/zones/<zone_id>/preferences', methods=['GET'])
+def get_preferences(zone_id):
     try:
-        preferences = preferences_collection.find_one({}, {'_id': 0})
+        preferences = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0, 'preferences': 1})
         if preferences:
             return jsonify(preferences)
         else:
@@ -79,34 +85,25 @@ def get_preferences():
         logger.error(f"Error fetching preferences: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-@app.route('/preferences', methods=['POST'])
-def create_preference():
+@app.route('/zones/<zone_id>/preferences', methods=['POST'])
+def create_preference(zone_id):
     try:
         data = request.json
-        preferences_collection.insert_one(data)
+        zones_collection.update_one({'zone_id': zone_id}, {'$set': {'preferences': data}}, upsert=True)
         return jsonify(data), 201
     except Exception as e:
         logger.error(f"Error creating preference: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-@app.route('/preferences', methods=['PUT'])
-def update_preference():
+@app.route('/zones/<zone_id>/preferences', methods=['PUT'])
+def update_preference(zone_id):
     try:
         data = request.json
-        preferences_collection.update_one({}, {'$set': data}, upsert=True)
+        zones_collection.update_one({'zone_id': zone_id}, {'$set': {'preferences': data}}, upsert=True)
         return jsonify(data), 200
     except Exception as e:
         logger.error(f"Error updating preference: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-@app.route('/preferences', methods=['DELETE'])
-def delete_preference():
-    try:
-        preferences_collection.delete_one({})
-        return jsonify({}), 204
-    except Exception as e:
-        logger.error(f"Error deleting preference: {e}")
-        return jsonify({"error": "Internal Server Error"}), 500
-
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=APP_PORT)
+    app.run(host='0.0.0.0', port=80)

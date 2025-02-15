@@ -13,7 +13,7 @@ export class SensorFactory {
     [SensorType.TEMPERATURE]: TemperatureSensor,
     [SensorType.HUMIDITY]: HumiditySensor,
     [SensorType.LIGHT]: LightSensor,
-    [SensorType.SOIL_MOISTURE]: SoilMoistureSensor,
+    [SensorType.soil_moisture_threshold]: SoilMoistureSensor,
   };
 
   static create({

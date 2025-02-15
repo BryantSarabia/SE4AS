@@ -5,12 +5,13 @@ import os
 from abc import ABC, abstractmethod
 from enum import Enum
 from time import sleep
+from typing import Tuple
 
 import paho.mqtt.client as mqtt
 
 EXECUTOR = 'executor/zone/{zone_id}/field/{field_id}'
 CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/consumption'
-MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto:1883')
+MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 
 logging.basicConfig(
     level=logging.INFO,
@@ -63,9 +64,11 @@ class Actuator(ABC):
             logger.error(f"Failed to setup MQTT client: {e}")
             raise
 
-    def _parse_mqtt_url(url: str) -> tuple[str, int]:
+    def _parse_mqtt_url(self, url: str) -> Tuple[str, int]:
         parts = url.split(":")
-        return parts[0], int(parts[1]) if len(parts) > 1 else 1883
+        host = parts[0]
+        port = int(parts[1])
+        return host, port
 
     def _on_connect(self, client, userdata, flags, rc: int) -> None:
         if rc == 0:

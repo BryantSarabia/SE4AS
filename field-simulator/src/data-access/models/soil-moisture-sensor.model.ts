@@ -5,8 +5,8 @@ import { BaseSensor } from "./base-sensor.model";
 
 export class SoilMoistureSensor extends BaseSensor<number> {
   constructor(sensor: SensorCreate<number>) {
-    const type = SensorType.SOIL_MOISTURE;
-    const unit = MeasurementUnit.SOIL_MOISTURE;
+    const type = SensorType.soil_moisture_threshold;
+    const unit = MeasurementUnit.soil_moisture_threshold;
     super({ ...sensor, type, unit });
   }
 

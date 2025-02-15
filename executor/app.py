@@ -3,7 +3,7 @@ import os
 from src.config import Config
 from src.executor import Executor
 
-MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto')
+MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 
 def main():
     config = Config(

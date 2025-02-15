@@ -22,10 +22,10 @@ class Executor:
             self.mqtt_client = mqtt.Client()
             self.mqtt_client.on_connect = self._on_connect
             self.mqtt_client.on_message = self._on_message
-            
+            host, port = self._parse_mqtt_url(self.config.MQTT_BROKER_URL)
             self.mqtt_client.connect(
-                self.config.MQTT_BROKER_URL,
-                self.config.MQTT_PORT,
+                host,
+                port,
                 self.config.MQTT_KEEPALIVE
             )
             
@@ -34,10 +34,16 @@ class Executor:
             logger.error(f"Failed to setup MQTT client: {e}")
             raise
 
+    def _parse_mqtt_url(self, url: str) -> Tuple[str, int]:
+        parts = url.split(":")
+        host = parts[0]
+        port = int(parts[1])
+        return host, port
+
     def _on_connect(self, client, userdata, flags, rc: int) -> None:
         if rc == 0:
             logger.info("Connected to MQTT broker successfully")
-            topic = f"{self.config.PLANNER_TOPIC_PREFIX}#"
+            topic = f"{self.config.PLANNER_TOPIC_PREFIX}/#"
             client.subscribe(topic)
             logger.info(f"Subscribed to topic: {topic}")
         else:

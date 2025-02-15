@@ -5,7 +5,7 @@ from enum import Enum
 
 
 class SensorType(Enum):
-    SOIL_MOISTURE = 'soil_moisture'
+    soil_moisture_threshold = 'soil_moisture_threshold'
     LIGHT = 'light'
     HUMIDITY = 'humidity'
     TEMPERATURE = 'temperature'
@@ -85,7 +85,7 @@ class TemperatureSensor(Sensor):
 
 class SensorFactory:
     SENSOR_MAP = {
-        SensorType.SOIL_MOISTURE: SoilMoistureSensor,
+        SensorType.soil_moisture_threshold: SoilMoistureSensor,
         SensorType.LIGHT: LightSensor,
         SensorType.HUMIDITY: HumiditySensor,
         SensorType.TEMPERATURE: TemperatureSensor

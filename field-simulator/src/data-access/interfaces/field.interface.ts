@@ -6,7 +6,7 @@ import { Zone } from "./zone.interface";
 export interface Field {
   id: number;
   name: string;
-  soil_moisture: number;
+  soil_moisture_threshold: number;
   temperature: number;
   humidity: number;
   light: number;

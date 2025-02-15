@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-import pymongo
+import requests
 from src.zone import ZoneService
 
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:5000')
@@ -25,7 +25,7 @@ def initialize():
     with open('zones.json') as f:
         zones_data = json.load(f)
         for zone_data in zones_data:
-          zone_service.add_zone(zone_data)
+          requests.post(f"{BACKEND_URL}/zones", json=zone_data)
     logger.info("MongoDB initialized with data.")
     sys.exit(0)
 
