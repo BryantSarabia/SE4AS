@@ -4,7 +4,7 @@ import os
 import sys
 
 import pymongo
-from src.zones import ZoneService
+from src.zone import ZoneService
 
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://localhost:5000')
 

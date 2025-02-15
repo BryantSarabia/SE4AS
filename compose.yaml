@@ -37,8 +37,6 @@ services:
     build: ./backend
     container_name: BACKEND
     restart: always
-    volumes:
-      - ./backend:/app
     env_file:
       - ./mosquitto/.env
       - ./backend/.env
@@ -101,7 +99,7 @@ services:
     networks:
       - iot
   analyzer:
-    build: ./analyzer
+    build: ./analyzer 
     container_name: ANALYZER
     restart: always
     env_file:
@@ -135,7 +133,7 @@ services:
   initializer:
     build: ./initializer
     container_name: INITIALIZER
-    restart: "no"
+    restart: no
     env_file:
       - ./mosquitto/.env
       - ./backend/.env

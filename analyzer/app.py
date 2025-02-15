@@ -2,9 +2,6 @@ import os
 
 from src.analyzer import Analyzer
 from src.config import Config
-from src.user_preferences import UserPreferences
-
-from analyzer import Analyzer
 
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto:1883')
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://backend:5000')

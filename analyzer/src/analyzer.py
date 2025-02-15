@@ -4,12 +4,13 @@ from time import sleep
 from typing import Dict, Optional
 
 import paho.mqtt.client as mqtt
-from config import Config
-from field import Field
-from sensor import SensorFactory, SensorType
-from src.weather import WeatherFetcher
 from user_preferences import UserPreferences
+from weather import WeatherFetcher
 from zone import Zone, ZoneService
+
+from .config import Config
+from .field import Field
+from .sensor import SensorFactory, SensorType
 
 logging.basicConfig(
     level=logging.INFO,

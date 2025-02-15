@@ -2,8 +2,9 @@ import json
 import logging
 from typing import Dict, Optional, Tuple
 
-from config import Config
 from paho.mqtt import client as mqtt
+
+from .config import Config
 
 logging.basicConfig(
     level=logging.INFO,

@@ -3,9 +3,7 @@ import os
 import time
 
 import paho.mqtt.client as mqtt
-from fields import Field
-from sensors import SensorFactory, SensorType
-from zones import Zone, ZoneService
+from src.zone import ZoneService
 
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mqtt://mosquitto:1883')
 BACKEND_URL = os.getenv('BACKEND_URL', 'http://backend:5000')
