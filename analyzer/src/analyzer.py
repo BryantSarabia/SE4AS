@@ -58,7 +58,7 @@ class Analyzer:
         except Exception as e:
             logger.error(f"Failed to load zones: {e}")
 
-    def _process_zone_data(self, zone: Zone) -> None:
+    def _process_zone(self, zone: Zone) -> None:
         self.zones[zone['zone_id']] = zone
 
     def _create_field(self, field_data: dict) -> Field:
