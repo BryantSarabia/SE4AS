@@ -44,7 +44,7 @@ class SensorSimulator:
                     for sensor in field.get_all_sensors():
                         value = sensor.simulate_value()
                         topic = f"zone/{zone.zone_id}/field/{field.field_id}/sensor/{sensor.sensor_id}/{sensor.type.value}"
-                        message = json.dumps({'value': value, 'latitude': zone.latitude, 'longitude': zone.longitude})
+                        message = json.dumps({'value': value})
                         self.mqtt_client.publish(topic, message)
                         print(f"Published sensor data: Zone={zone.zone_id}, Field={field.field_id}, Sensor={sensor.sensor_id}, Type={sensor.type.value}, Value={value}")
             time.sleep(10)  # Simulate data every 10 seconds

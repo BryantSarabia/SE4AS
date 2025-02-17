@@ -24,6 +24,8 @@ class Analyzer:
         self.zones: Dict[str, Zone] = {}
         self.weather_fetcher = WeatherFetcher(config.WEATHER_API_KEY)
         self._load_zones()
+
+    def run(self) -> None:
         self._setup_mqtt_client()
 
     def _setup_mqtt_client(self) -> None:
@@ -61,9 +63,7 @@ class Analyzer:
 
     def _create_field(self, field_data: dict) -> Field:
         field = Field(
-            field_data['field_id'],
-            field_data['latitude'],
-            field_data['longitude']
+            field_data['field_id']
         )
         for sensor_data in field_data['sensors']:
             self._add_sensor_to_field(field, sensor_data)
@@ -92,8 +92,12 @@ class Analyzer:
         zone_id = parts[1]
         field_id = parts[3]
         field = self.zones[zone_id].get_field(field_id)
-        sensor = field.get_sensor(payload['sensor_id'])
+        if not field:
+            logger.error(f"Field {field_id} not found in zone {zone_id}")
+            return
+        sensor = field.get_sensor(payload['sensor_id'], None)
         if not sensor:
+            logger.error(f"Sensor {payload['sensor_id']} not found in field {field_id}")
             return
         sensor.set_value(payload['value'])
         analysis_result = self.analyze_data(zone_id, field_id)
@@ -143,22 +147,6 @@ class Analyzer:
                 "reason": "(Sml > Smt) ⋁ Rp"
             }
         return None
-
-    def run(self) -> None:
-        while True:
-            try:
-                self._analyze_all_fields()
-                sleep(self.config.ANALYSIS_INTERVAL)
-            except Exception as e:
-                logger.error(f"Error in main analysis loop: {e}")
-                sleep(self.config.ANALYSIS_INTERVAL)
-
-    def _analyze_all_fields(self) -> None:
-        for zone_id, zone in self.zones.items():
-            for field_id in zone.fields:
-                analysis_result = self.analyze_data(zone_id, field_id)
-                if analysis_result:
-                    self._publish_analysis_result(zone_id, field_id, analysis_result)
 
     def _publish_analysis_result(
         self,
