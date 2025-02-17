@@ -32,8 +32,6 @@ class SensorSimulator:
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_disconnect = self.on_disconnect
-        self.mqtt_client.on_publish = self.on_publish
-        self.mqtt_client.on_log = self.on_log
 
         try:
             self.mqtt_client.connect(mqtt_broker_url, mqtt_port, 60)
@@ -50,12 +48,6 @@ class SensorSimulator:
 
     def on_disconnect(self, client, userdata, rc):
         logger.info(f"Disconnected from MQTT broker with result code {rc}")
-
-    def on_publish(self, client, userdata, mid):
-        logger.info(f"Message published with mid: {mid}")
-
-    def on_log(self, client, userdata, level, buf):
-        logger.debug(f"MQTT log: {buf}")
 
     def load_zones(self):
         try:
