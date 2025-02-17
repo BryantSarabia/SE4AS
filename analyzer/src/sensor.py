@@ -22,6 +22,9 @@ class Sensor(ABC):
     def simulate_value(self):
         pass
 
+    def set_value(self, value):
+        self.value = max(self.min_value, min(self.max_value, value))
+
     def to_dict(self):
         return {
             'sensor_id': self.sensor_id,

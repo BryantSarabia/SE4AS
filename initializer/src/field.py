@@ -4,10 +4,11 @@ from .sensor import Sensor, SensorType
 
 class Field:
 
-    def __init__(self, field_id: str):
+    def __init__(self, field_id: str, soil_moisture_threshold: float):
         self.field_id = field_id
         self.sensors: dict[str, dict[str, Sensor]]  = {}
         self.actuators: dict[str, dict[str, Actuator]] = {}
+        self.soil_moisture_threshold = soil_moisture_threshold
 
     def to_dict(self):
         return {

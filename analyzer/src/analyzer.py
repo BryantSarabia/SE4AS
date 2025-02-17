@@ -91,13 +91,14 @@ class Analyzer:
         parts = topic.split("/")
         zone_id = parts[1]
         field_id = parts[3]
+        sensor_id = parts[5]
         field = self.zones[zone_id].get_field(field_id)
         if not field:
             logger.error(f"Field {field_id} not found in zone {zone_id}")
             return
-        sensor = field.get_sensor(payload['sensor_id'], None)
+        sensor = field.get_sensor(sensor_id)
         if not sensor:
-            logger.error(f"Sensor {payload['sensor_id']} not found in field {field_id}")
+            logger.error(f"Sensor {sensor_id} not found in field {field_id}")
             return
         sensor.set_value(payload['value'])
         analysis_result = self.analyze_data(zone_id, field_id)
@@ -114,7 +115,7 @@ class Analyzer:
                 return None
 
             rain_prediction = self._is_rain_predicted(zone.latitude, zone.longitude)
-            soil_moisture_threshold = zone.soil_moisture_threshold
+            soil_moisture_threshold = field.soil_moisture_threshold
 
             return self._determine_irrigation_action(soil_moisture_threshold, soil_moisture_threshold_avg, rain_prediction)
         except Exception as e:

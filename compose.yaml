@@ -66,7 +66,7 @@ services:
     container_name: MOSQUITTO
     restart: always
     ports:
-      - 1883:1883
+      - 1882:1883
       - 9001:9001
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
