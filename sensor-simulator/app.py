@@ -15,16 +15,15 @@ BACKEND_URL = os.getenv('BACKEND_URL', 'http://backend:5000')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-
 def _parse_mqtt_url(url: str) -> Tuple[str, int]:
-        parts = url.split(":")
-        host = parts[0]
-        port = int(parts[1])
-        return host, port
+    parts = url.split(":")
+    host = parts[0]
+    port = int(parts[1])
+    return host, port
 
 class SensorSimulator:
     def __init__(self, mqtt_broker_url, mqtt_port, backend_url):
-        logger.info(mqtt_broker_url, mqtt_port)
+        logger.info(f"MQTT Broker URL: {mqtt_broker_url}, MQTT Port: {mqtt_port}")
         self.zone_service = ZoneService(backend_url)
         self.backend_url = backend_url
         self.zones = []
@@ -38,6 +37,7 @@ class SensorSimulator:
 
         try:
             self.mqtt_client.connect(mqtt_broker_url, mqtt_port, 60)
+            self.mqtt_client.loop_start()
         except Exception as e:
             logger.error(f"Failed to connect to MQTT broker: {e}")
 
@@ -79,7 +79,16 @@ class SensorSimulator:
                             logger.error(f"Failed to publish sensor data: {e}")
             time.sleep(10)  # Simulate data every 10 seconds
 
+    def stop(self):
+        self.mqtt_client.loop_stop()
+        self.mqtt_client.disconnect()
+
 if __name__ == "__main__":
     host, port = _parse_mqtt_url(MQTT_BROKER_URL)
     simulator = SensorSimulator(host, port, BACKEND_URL)
-    simulator.simulate_sensor_data()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        simulator.stop()
+        logger.info("Sensor simulator stopped.")

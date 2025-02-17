@@ -3,10 +3,10 @@
     "zone_id": "coppito",
     "latitude": 42.3702262,
     "longitude": 13.3267021,
-    "soil_moisture_threshold": 50,
     "fields": [
       {
         "field_id": "pomodori",
+        "soil_moisture_threshold": 70,
         "sensors": [
           { "sensor_id": "sensor1", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor2", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
@@ -45,6 +45,7 @@
       },
       {
         "field_id": "zucchine",
+        "soil_moisture_threshold": 65,
         "sensors": [
           { "sensor_id": "sensor1", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor2", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
@@ -83,6 +84,7 @@
       },
       {
         "field_id": "peperoni",
+        "soil_moisture_threshold": 55,
         "sensors": [
           { "sensor_id": "sensor1", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor2", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
@@ -122,13 +124,14 @@
     ]
   },
   {
-    "zone_id": "Collebrincioni",
+    "zone_id": "collebrincioni",
     "latitude": 42.4037844,
     "longitude": 13.4275238,
     "soil_moisture_threshold": 50,
     "fields": [
       {
         "field_id": "pomodori",
+        "soil_moisture_threshold": 70,
         "sensors": [
           { "sensor_id": "sensor1", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor2", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
@@ -167,6 +170,7 @@
       },
       {
         "field_id": "zucchine",
+        "soil_moisture_threshold": 65,
         "sensors": [
           { "sensor_id": "sensor1", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor2", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
@@ -205,6 +209,7 @@
       },
       {
         "field_id": "peperoni",
+        "soil_moisture_threshold": 55,
         "sensors": [
           { "sensor_id": "sensor1", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor2", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },

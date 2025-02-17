@@ -33,7 +33,6 @@ class Zone:
             "zone_id": self.zone_id,
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "soil_moisture_threshold": self.soil_moisture_threshold,
             "fields": [field.to_dict() for field in self.fields.values()]
         }
 
@@ -105,11 +104,12 @@ class ZoneService:
             return None
         
     def _parse_zone(self, zone_data: dict) -> Zone:
-        zone = Zone(zone_id=zone_data['zone_id'],latitude=zone_data['latitude'],longitude=zone_data['longitude'],soil_moisture_threshold=zone_data['soil_moisture_threshold'])
+        zone = Zone(zone_id=zone_data['zone_id'],latitude=zone_data['latitude'],longitude=zone_data['longitude'])
         for field_data in zone_data.get('fields', []):
             try:
                 field = Field(
-                    field_data['field_id']
+                    field_data['field_id'],
+                    field_data['soil_moisture_threshold']
                 )
             except Exception as e:
                 logger.error(f"Error creating field {field.field_id}: {e}")
