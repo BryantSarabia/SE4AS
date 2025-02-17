@@ -35,7 +35,7 @@ class Analyzer:
             self.mqtt_client.on_message = self._on_message
             host, port = self._parse_mqtt_url(self.config.MQTT_BROKER_URL)
             self.mqtt_client.connect(host, port, self.config.MQTT_KEEPALIVE)
-            self.mqtt_client.loop_start()
+            self.mqtt_client.loop_forever()
         except Exception as e:
             logger.error(f"Failed to setup MQTT client: {e}")
             raise
@@ -59,7 +59,7 @@ class Analyzer:
             logger.error(f"Failed to load zones: {e}")
 
     def _process_zone(self, zone: Zone) -> None:
-        self.zones[zone['zone_id']] = zone
+        self.zones[zone.zone_id] = zone
 
     def _create_field(self, field_data: dict) -> Field:
         field = Field(

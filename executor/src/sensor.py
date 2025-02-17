@@ -1,4 +1,4 @@
-import math
+ 
 import random
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -37,7 +37,7 @@ class SoilMoistureSensor(Sensor):
 
     def simulate_value(self):
         value = self.value + random.uniform(-5, 5)
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
+        self.value = max(self.min_value, min(self.max_value, value))
         return self.value
     
     def to_dict(self):
@@ -49,7 +49,7 @@ class LightSensor(Sensor):
 
     def simulate_value(self):
         value = self.value + random.uniform(-50, 50)
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
+        self.value = max(self.min_value, min(self.max_value, value))
         return self.value
     
     def to_dict(self):
@@ -61,7 +61,7 @@ class HumiditySensor(Sensor):
 
     def simulate_value(self):
         value = self.value + random.uniform(-5, 5)
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
+        self.value = max(self.min_value, min(self.max_value, value))
         return self.value
     
     def to_dict(self):
@@ -73,7 +73,7 @@ class TemperatureSensor(Sensor):
 
     def simulate_value(self):
         value = self.value + random.uniform(-1, 1)
-        self.value = math.max(self.min_value, math.min(self.max_value, value))
+        self.value = max(self.min_value, min(self.max_value, value))
         return self.value
     
     def to_dict(self):

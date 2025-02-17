@@ -120,11 +120,11 @@ class ZoneService:
                     field.add_sensor(sensor)
                 except Exception as e:
                     logger.error(f"Error creating sensor {sensor_data['sensor_id']}: {e}")
-            for actuator_data in field_data.get('actuators', []):
-                try:
-                    actuator = ActuatorFactory.create_actuator(zone_id=zone.zone_id, field_id=field.field_id,**actuator_data)
-                    field.add_actuator(actuator)
-                except Exception as e:
-                    logger.error(f"Error creating actuator {actuator_data['actuator_id']}: {e}")
+            # for actuator_data in field_data.get('actuators', []):
+            #     try:
+            #         actuator = ActuatorFactory.create_actuator(zone_id=zone.zone_id, field_id=field.field_id,**actuator_data)
+            #         field.add_actuator(actuator)
+            #     except Exception as e:
+            #         logger.error(f"Error creating actuator {actuator_data['actuator_id']}: {e}")
             zone.add_field(field)
         return zone

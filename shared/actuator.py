@@ -1,6 +1,5 @@
 import json
 import logging
-import math
 import os
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -90,7 +89,7 @@ class Actuator(ABC):
     def start(self, value: float) -> None:
         try:
             if self.min_value is not None and self.max_value is not None:
-                self.value = math.max(self.min_value, math.min(self.max_value, value))
+                self.value = max(self.min_value, min(self.max_value, value))
             else:
                 self.value = value
             self.status = 'on'
