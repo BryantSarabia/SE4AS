@@ -52,9 +52,16 @@ class Executor:
     def _on_message(self, client, userdata, msg) -> None:
         try:
             topic = msg.topic
-            payload = self._parse_payload(msg.payload)
-            
-            zone_id, field_id = self._parse_topic(topic)
+            try:
+                payload = self._parse_payload(msg.payload)
+            except Exception as e:
+                logger.error(f"Error parsing payload: {e}")
+                return
+            try:
+                zone_id, field_id = self._parse_topic(topic)
+            except Exception as e:
+                logger.error(f"Error parsing topic: {e}")
+                return
             if not zone_id or not field_id:
                 logger.error(f"Invalid topic format: {topic}")
                 return
