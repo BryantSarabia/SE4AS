@@ -43,7 +43,6 @@ class SensorSimulator:
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             logger.info(f"Connected to MQTT broker with result code {rc}")
-            self.simulate_sensor_data()
         else:
             logger.error(f"Failed to connect to MQTT broker with result code {rc}")
 
@@ -84,9 +83,10 @@ class SensorSimulator:
 if __name__ == "__main__":
     host, port = _parse_mqtt_url(MQTT_BROKER_URL)
     simulator = SensorSimulator(host, port, BACKEND_URL)
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        logger.info("Stopping Sensor Simulator")
-        simulator.stop()
+    simulator.simulate_sensor_data()
+    # try:
+    #     while True:
+    #         time.sleep(1)
+    # except KeyboardInterrupt:
+    #     logger.info("Stopping Sensor Simulator")
+    #     simulator.stop()
