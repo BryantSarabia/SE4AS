@@ -10,7 +10,7 @@ from typing import Tuple
 import paho.mqtt.client as mqtt
 
 EXECUTOR = 'executor/zone/{zone_id}/field/{field_id}'
-CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/consumption'
+CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/{actuator_type}/consumption'
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 
 logging.basicConfig(
@@ -53,7 +53,8 @@ class Actuator(ABC):
             self.consumption_topic = CONSUMPTION_TOPIC.format(
                 zone_id=self.zone_id,
                 field_id=self.field_id,
-                actuator_id=self.actuator_id
+                actuator_id=self.actuator_id,
+                actuator_type=self.type
             )
 
             self.mqtt_client = mqtt.Client()
