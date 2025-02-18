@@ -57,8 +57,9 @@ def get_all_sensors(zone_id):
         zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
         if zone:
             sensors = []
-            for field in zone['fields'].values():
-                sensors.extend(field['sensors'])
+            for field in zone['fields']:
+                if(field['sensors']):
+                    sensors.extend(field['sensors'])
             return jsonify(sensors)
         return jsonify({}), 404
     except Exception as e:
@@ -71,8 +72,9 @@ def get_all_actuators(zone_id):
         zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
         if zone:
             actuators = []
-            for field in zone['fields'].values():
-                actuators.extend(field['actuators'])
+            for field in zone['fields']:
+                if(field['actuators']):
+                    actuators.extend(field['actuators'])
             return jsonify(actuators)
         return jsonify({}), 404
     except Exception as e:
