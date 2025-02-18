@@ -1,0 +1,44 @@
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "grafana",
+  "signedByOrg": "grafana",
+  "signedByOrgName": "Grafana Labs",
+  "plugin": "yesoreyeram-infinity-datasource",
+  "version": "3.0.0-beta.1",
+  "time": 1738309366659,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "LICENSE": "85fb2c20b586ef9dc00ee5c41140e1cd59fdded9a0b24a9054b04e9f0f6b2977",
+    "plugin.json": "6e008dc9e55e66dea378566ffefd16af93d078fc29970a0eac0257c6e583fcf4",
+    "go_plugin_build_manifest": "4ae24d6df503d132e65a1ab21b4c14038b884a27c2bd0744dc72744bbe10b74b",
+    "module.js.map": "38ec3f23c889466d0447ac018fae72426be14fd09ac06faf734635156972f80d",
+    "gpx_infinity_linux_amd64": "9567ab322ca4d1761e1e62bf2e77f3f7cbace109b1859fbd91e15affa35e35c4",
+    "CHANGELOG.md": "9eef6c17956e8b0abe330fdaad4d5b5db4d72c55f967e856259a983613cf54ed",
+    "module.js.LICENSE.txt": "99c2a3e174dd5e46ac78787c5d7965079f788f7edf923e0868a3505826b0e34d",
+    "img/slide-rest-api.png": "cf72349768e0ccf19a856d86e97c8e67dcdadfcee49e73ae5acbe781c3ae0c79",
+    "img/slide-features.png": "58aba3b2f2d73ee99945cba9746463f0039d8afb5366ed8d42db62145b914d0f",
+    "img/homepage-bg.svg": "97ec32b2c542bcb63b7fa7659e42a876a5b9ec00aef7a486f2dc41b83d7d9eb8",
+    "img/slide-series.png": "f7d523c39f9d4567974c37432f047e4e8944cb92dc2c9a4424757ce5e54dc3a7",
+    "img/aws.jpg": "e682ccc794708fd3eb32a3fb5e2bcccd8ff3b54f30eba2086fd1b28a82020d81",
+    "img/slide-variables.png": "8ed0cd7b1ac00bd2c7fa6e72c513b678c39ba7d63030f06e8695cb1d352e3b34",
+    "img/icon.svg": "e498b00e1cc3c9e8b65a2b8320b7d170c6da61d424fe5f3f3fdf9963204449ae",
+    "img/oauth-2-sm.png": "9945bb307d5545369d50381acc97d48b4a98433831f14e99eb839f0970a91258",
+    "module.js": "e597b4443d48d4578e69d3beb186b83f62fa572ba1409679e50eea480bfda127",
+    "README.md": "351dea529ec76dc9b396ef8f29d4ec36cab5ace16040f42142f0c58427ee3a7d"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+Version: OpenPGP.js v4.10.11
+Comment: https://openpgpjs.org
+
+wrkEARMKAAYFAmecfvYAIQkQfk0ManCIZucWIQTzOyW2kQdOhGNlcPN+TQxq
+cIhm5yVNAgkBf/LkYsqrwkjicLrdz5/IecxhJmMv/SMyLvL/oZeYgIdYslHN
+Os6Z/88XUQZ5D5QqZjy1SXzC3c/wf1wAxWQLP3ACCQFW5R+X7cFnmneom2HZ
+NPsFpNVmORwC7RIp8sNzsdf0PPc2/YOBWsMEx8/BuBEy55Wu8Q24QvCCshUD
+C/pm7XbS5Q==
+=Mq3D
+-----END PGP SIGNATURE-----

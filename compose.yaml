@@ -14,10 +14,14 @@ services:
     env_file:
       - ./grafana/.env
       - ./knowledge/.env
+      - ./mongodb/.env
+      - ./backend/.env
     networks:
       - iot
     depends_on:
       - influxdb
+      - mongodb
+      - backend
   backend:
     build: ./backend
     container_name: BACKEND
