@@ -35,7 +35,7 @@ class SensorSimulator:
         self.mqtt_client.on_log = self.on_log
 
         try:
-            self.mqtt_client.connect(mqtt_broker_url, mqtt_port, 60)
+            self.mqtt_client.connect("mosquitto", 1883, 60)
             self.mqtt_client.loop_forever()
         except Exception as e:
             logger.error(f"Failed to connect to MQTT broker: {e}")
@@ -71,7 +71,7 @@ class SensorSimulator:
                         logger.info(f"Publishing sensor data to topic: {topic}")
                         message = json.dumps({'value': value})
                         try:
-                            self.mqtt_client.publish(topic, message, qos=2)
+                            self.mqtt_client.publish(topic, message)
                             logger.info(f"Published sensor data: Zone={zone.zone_id}, Field={field.field_id}, Sensor={sensor.sensor_id}, Type={sensor.type}, Value={value}")
                         except Exception as e:
                             logger.error(f"Failed to publish sensor data: {e}")
