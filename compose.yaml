@@ -1,21 +1,6 @@
 version: "3.8"
 name: se4as-bryant
 services:
-
-  # field-simulator:
-  #   build: ./field-simulator
-  #   container_name: FIELD_SIMULATOR
-  #   restart: always
-  #   volumes:
-  #     - ./field-simulator/combined.log:/app/combined.log
-  #     - ./field-simulator/error.log:/app/error.log
-  #   environment:
-  #     - BROKER_URL=mosquitto:1883
-  #     - DEBUG=true
-  #   networks:
-  #     - iot
-  #   depends_on:
-  #     - mosquitto
   grafana:
     build: ./grafana
     container_name: GRAFANA

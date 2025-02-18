@@ -35,7 +35,7 @@ class SensorSimulator:
 
         try:
             self.mqtt_client.connect(mqtt_broker_url, mqtt_port, 60)
-            self.mqtt_client.loop_start()
+            self.mqtt_client.loop_forever()
         except Exception as e:
             logger.error(f"Failed to connect to MQTT broker: {e}")
 
@@ -78,9 +78,3 @@ class SensorSimulator:
 if __name__ == "__main__":
     host, port = _parse_mqtt_url(MQTT_BROKER_URL)
     simulator = SensorSimulator(host, port, BACKEND_URL)
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        simulator.stop()
-        logger.info("Sensor simulator stopped.")
