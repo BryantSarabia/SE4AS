@@ -50,6 +50,34 @@ def create_zone():
     except Exception as e:
         logger.error(f"Error creating zone: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+    
+@app.route('/zones/<zone_id>/fields/sensors', methods=['GET'])
+def get_all_sensors(zone_id):
+    try:
+        zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
+        if zone:
+            sensors = []
+            for field in zone['fields'].values():
+                sensors.extend(field['sensors'])
+            return jsonify(sensors)
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching sensors: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+    
+@app.route('/zones/<zone_id>/fields/actuators', methods=['GET'])
+def get_all_actuators(zone_id):
+    try:
+        zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
+        if zone:
+            actuators = []
+            for field in zone['fields'].values():
+                actuators.extend(field['actuators'])
+            return jsonify(actuators)
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching actuators: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/zones/<zone_id>/fields/<field_id>', methods=['GET'])
 def get_field(zone_id, field_id):
@@ -62,6 +90,32 @@ def get_field(zone_id, field_id):
         return jsonify({}), 404
     except Exception as e:
         logger.error(f"Error fetching field: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+    
+@app.route('/zones/<zone_id>/fields/<field_id>/sensors', methods=['GET'])
+def get_sensors(zone_id, field_id):
+    try:
+        zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
+        if zone:
+            field = zone['fields'].get(field_id)
+            if field:
+                return jsonify(field['sensors'])
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching sensors: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+    
+@app.route('/zones/<zone_id>/fields/<field_id>/actuators', methods=['GET'])
+def get_actuators(zone_id, field_id):
+    try:
+        zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
+        if zone:
+            field = zone['fields'].get(field_id)
+            if field:
+                return jsonify(field['actuators'])
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching actuators: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/zones/<zone_id>/fields', methods=['POST'])
