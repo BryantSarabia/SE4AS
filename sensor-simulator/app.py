@@ -32,6 +32,7 @@ class SensorSimulator:
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_disconnect = self.on_disconnect
+        self.mqtt_client.on_log = self.on_log
 
         try:
             self.mqtt_client.connect(mqtt_broker_url, mqtt_port, 60)
@@ -45,6 +46,10 @@ class SensorSimulator:
             self.simulate_sensor_data()
         else:
             logger.error(f"Failed to connect to MQTT broker with result code {rc}")
+
+    def on_log(self, client, userdata, paho_log_level, messages):
+        if paho_log_level == mqtt.LogLevel.MQTT_LOG_ERR:
+            print(messages)
 
     def on_disconnect(self, client, userdata, rc):
         logger.info(f"Disconnected from MQTT broker with result code {rc}")
@@ -63,9 +68,10 @@ class SensorSimulator:
                     for sensor in field.get_all_sensors():
                         value = sensor.simulate_value()
                         topic = f"zone/{zone.zone_id}/field/{field.field_id}/sensor/{sensor.sensor_id}/{sensor.type}"
+                        logger.info(f"Publishing sensor data to topic: {topic}")
                         message = json.dumps({'value': value})
                         try:
-                            self.mqtt_client.publish(topic, message)
+                            self.mqtt_client.publish(topic, message, qos=2)
                             logger.info(f"Published sensor data: Zone={zone.zone_id}, Field={field.field_id}, Sensor={sensor.sensor_id}, Type={sensor.type}, Value={value}")
                         except Exception as e:
                             logger.error(f"Failed to publish sensor data: {e}")
