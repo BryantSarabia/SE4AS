@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import threading
 from abc import ABC, abstractmethod
 from enum import Enum
 from time import sleep
@@ -9,7 +10,7 @@ from typing import Tuple
 import paho.mqtt.client as mqtt
 
 EXECUTOR = 'executor/zone/{zone_id}/field/{field_id}'
-CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/{actuator_type}'
+CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/consumption'
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 
 logging.basicConfig(
@@ -28,7 +29,7 @@ class ActionType(Enum):
 
 class Actuator(ABC):
 
-    def __init__(self, actuator_id: str, type: str, zone_id: str, field_id: str, consumption: float, measurement: str, max_value, min_value):
+    def __init__(self, actuator_id: str, type: ActionType, zone_id: str, field_id: str, consumption: float, measurement: str, max_value, min_value):
         self.actuator_id = actuator_id
         self.type = type
         self.value = None
@@ -40,6 +41,7 @@ class Actuator(ABC):
         self.measurement = measurement
         self.status = 'off'
         self._setup_mqtt_client()
+        self._consumption_thread = None
 
     def _setup_mqtt_client(self) -> None:
         """Set up MQTT client with proper configuration."""
@@ -51,8 +53,7 @@ class Actuator(ABC):
             self.consumption_topic = CONSUMPTION_TOPIC.format(
                 zone_id=self.zone_id,
                 field_id=self.field_id,
-                actuator_id=self.actuator_id,
-                actuator_type=self.type
+                actuator_id=self.actuator_id
             )
 
             self.mqtt_client = mqtt.Client()
@@ -93,7 +94,7 @@ class Actuator(ABC):
             else:
                 self.value = value
             self.status = 'on'
-            self._publish_consumption()
+            self._start_consumption_thread()
             logger.info(f"Started actuator {self.actuator_id} with value {self.value}")
         except Exception as e:
             logger.error(f"Error starting actuator: {e}")
@@ -102,18 +103,21 @@ class Actuator(ABC):
         try:
             self.value = None
             self.status = 'off'
+            if self._consumption_thread and self._consumption_thread.is_alive():
+                self._consumption_thread.join()
             logger.info(f"Stopped actuator {self.actuator_id}")
         except Exception as e:
             logger.error(f"Error stopping actuator: {e}")
     
-    def on_connect(self, client, userdata):
-        client.subscribe(self.topic)
+    def _start_consumption_thread(self) -> None:
+        self._consumption_thread = threading.Thread(target=self._publish_consumption)
+        self._consumption_thread.start()
     
     def _publish_consumption(self) -> None:
         try:
             while self.status == 'on':
                 payload = {
-                    'value': self.consumption,
+                    'value': self.consumption / 60, # consumption per second
                     'measurement': self.measurement
                 }
                 self.mqtt_client.publish(self.consumption_topic, json.dumps(payload))

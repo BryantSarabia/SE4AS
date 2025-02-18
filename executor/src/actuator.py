@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import threading
 from abc import ABC, abstractmethod
 from enum import Enum
 from time import sleep
@@ -40,6 +41,7 @@ class Actuator(ABC):
         self.measurement = measurement
         self.status = 'off'
         self._setup_mqtt_client()
+        self._consumption_thread = None
 
     def _setup_mqtt_client(self) -> None:
         """Set up MQTT client with proper configuration."""
@@ -92,7 +94,7 @@ class Actuator(ABC):
             else:
                 self.value = value
             self.status = 'on'
-            self._publish_consumption()
+            self._start_consumption_thread()
             logger.info(f"Started actuator {self.actuator_id} with value {self.value}")
         except Exception as e:
             logger.error(f"Error starting actuator: {e}")
@@ -101,18 +103,21 @@ class Actuator(ABC):
         try:
             self.value = None
             self.status = 'off'
+            if self._consumption_thread and self._consumption_thread.is_alive():
+                self._consumption_thread.join()
             logger.info(f"Stopped actuator {self.actuator_id}")
         except Exception as e:
             logger.error(f"Error stopping actuator: {e}")
     
-    def on_connect(self, client, userdata):
-        client.subscribe(self.topic)
+    def _start_consumption_thread(self) -> None:
+        self._consumption_thread = threading.Thread(target=self._publish_consumption)
+        self._consumption_thread.start()
     
     def _publish_consumption(self) -> None:
         try:
             while self.status == 'on':
                 payload = {
-                    'value': self.consumption,
+                    'value': self.consumption / 60,
                     'measurement': self.measurement
                 }
                 self.mqtt_client.publish(self.consumption_topic, json.dumps(payload))
