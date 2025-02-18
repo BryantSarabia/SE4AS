@@ -26,6 +26,8 @@ services:
     build: ./backend
     container_name: BACKEND
     restart: always
+    ports:
+      - 80:80
     env_file:
       - ./mosquitto/.env
       - ./backend/.env
@@ -45,7 +47,7 @@ services:
     container_name: MONGODB
     restart: always
     ports:
-      - 27017:27017
+      - 27016:27017
     volumes:
       - ./mongodb/data:/data/db
     networks:

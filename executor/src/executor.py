@@ -95,7 +95,7 @@ class Executor:
     def _parse_topic(self, topic: str) -> Tuple[Optional[str], Optional[str]]:
         try:
             parts = topic.split('/')
-            return parts[1], parts[3]
+            return parts[2], parts[4]
         except IndexError:
             return None, None
 
@@ -105,7 +105,7 @@ class Executor:
             reason = payload['reason']
             
             topic = f"{self.config.EXECUTOR_TOPIC_PREFIX}/zone/{zone_id}/field/{field_id}"
-            client.publish(topic, json.dumps({"command": action}))
+            client.publish(topic, json.dumps({"command": action, "value": 100})) # todo: change value to actual value
             
             logger.info(
                 f"Executed action for {zone_id}/{field_id}: {action}, Reason: {reason}"

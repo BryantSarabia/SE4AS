@@ -66,8 +66,23 @@ def get_all_sensors(zone_id):
         logger.error(f"Error fetching sensors: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
     
-@app.route('/zones/<zone_id>/fields/actuators', methods=['GET'])
-def get_all_actuators(zone_id):
+@app.route('/zones/<zone_id>/fields/sensors/count', methods=['GET'])
+def get_all_sensors_count(zone_id):
+    try:
+        zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
+        if zone:
+            sensors = []
+            for field in zone['fields']:
+                if(field['sensors']):
+                    sensors.extend(field['sensors'])
+            return jsonify(len(sensors))
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching sensors: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+    
+@app.route('/zones/<zone_id>/fields/actuators/count', methods=['GET'])
+def get_all_actuators_count(zone_id):
     try:
         zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
         if zone:
@@ -75,7 +90,7 @@ def get_all_actuators(zone_id):
             for field in zone['fields']:
                 if(field['actuators']):
                     actuators.extend(field['actuators'])
-            return jsonify(actuators)
+            return jsonify(len(actuators))
         return jsonify({}), 404
     except Exception as e:
         logger.error(f"Error fetching actuators: {e}")

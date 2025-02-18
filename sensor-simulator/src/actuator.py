@@ -124,7 +124,7 @@ class Sprinkler(Actuator):
     def _on_message(self, client, userdata, msg) -> None:
         try:
             payload = json.loads(msg.payload.decode())
-            action = payload.get('action')
+            action = payload.get('command')
             
             if not action:
                 logger.warning("Received message without action")
@@ -150,7 +150,7 @@ class DripIrrigation(Actuator):
     def _on_message(self, client, userdata, msg) -> None:
         try:
             payload = json.loads(msg.payload.decode())
-            action = payload.get('action')
+            action = payload.get('command')
             
             if not action:
                 logger.warning("Received message without action")

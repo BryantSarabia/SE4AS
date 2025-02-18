@@ -68,7 +68,7 @@ class Planner:
     def _parse_topic(self, topic: str) -> Tuple[Optional[str], Optional[str]]:
         try:
             parts = topic.split('/')
-            return parts[1], parts[3]
+            return parts[2], parts[4]
         except IndexError:
             return None, None
 
