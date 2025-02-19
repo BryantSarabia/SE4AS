@@ -118,7 +118,7 @@ class Actuator(ABC):
         try:
             while self.status == 'on':
                 payload = {
-                    'value': self.consumption / 60, # consumption per second
+                    'value': ((self.value / self.max_value) * self.consumption) / 60, # consumption per second
                     'measurement': self.measurement
                 }
                 self.mqtt_client.publish(self.consumption_topic, json.dumps(payload))

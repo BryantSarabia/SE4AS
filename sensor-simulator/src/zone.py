@@ -115,7 +115,7 @@ class ZoneService:
                 logger.error(f"Error creating field {field.field_id}: {e}")
             for sensor_data in field_data.get('sensors', []):
                 try:
-                    sensor = SensorFactory.create_sensor(**sensor_data)
+                    sensor = SensorFactory.create_sensor(zone=zone, field=field, **sensor_data)
                     field.add_sensor(sensor)
                 except Exception as e:
                     logger.error(f"Error creating sensor {sensor_data['sensor_id']}: {e}")

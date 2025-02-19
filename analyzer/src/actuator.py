@@ -106,6 +106,12 @@ class Actuator(ABC):
             self.status = 'off'
             if self._consumption_thread and self._consumption_thread.is_alive():
                 self._consumption_thread.join()
+            payload = {
+                'status': self.status,
+                'value': 0,
+                'measurement': self.measurement,
+            }
+            self.mqtt_client.publish(self.consumption_topic, json.dumps(payload))
             logger.info(f"Stopped actuator {self.actuator_id}")
         except Exception as e:
             logger.error(f"Error stopping actuator: {e}")
@@ -118,8 +124,9 @@ class Actuator(ABC):
         try:
             while self.status == 'on':
                 payload = {
-                    'value': self.consumption / 60,
-                    'measurement': self.measurement
+                    'value': ((self.value / self.max_value) * self.consumption) / 60,
+                    'measurement': self.measurement,
+                    'status': self.status
                 }
                 self.mqtt_client.publish(self.consumption_topic, json.dumps(payload))
                 sleep(1)
