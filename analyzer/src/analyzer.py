@@ -128,9 +128,8 @@ class Analyzer:
         if not weather_data:
             return False
         try:
-            logger.info(f"Weather data: {weather_data}")
             offset = min(self.config.NEXT_HOURS, len(weather_data['list']) - 1)
-            return 'rain' in weather_data['list']['weather'][offset]['description'].lower()
+            return 'rain' in weather_data['list'][offset]['weather'][0]['description'].lower()
         except Exception as e:
             logger.error(f"Error checking rain prediction: {e}")
             return False
