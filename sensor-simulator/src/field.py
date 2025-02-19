@@ -4,17 +4,20 @@ from .sensor import Sensor, SensorType
 
 class Field:
 
-    def __init__(self, field_id: str, soil_moisture_threshold: float):
+    def __init__(self, field_id: str, soil_moisture_threshold: float, area: float,soil_depth: float ):
         self.field_id = field_id
         self.sensors: dict[str, dict[str, Sensor]]  = {}
         self.actuators: dict[str, dict[str, Actuator]] = {}
         self.soil_moisture_threshold = soil_moisture_threshold
+        self.area = area
+        self.soil_depth = soil_depth
 
     def to_dict(self):
         return {
             'field_id': self.field_id,
-            'latitude': self.latitude,
-            'longitude': self.longitude,
+            'soil_moisture_threshold': self.soil_moisture_threshold,
+            'area': self.area,
+            'soil_depth': self.soil_depth,
             'sensors': [sensor.to_dict() for sensor_dict in self.sensors.values() for sensor in sensor_dict.values()],
             'actuators': [actuator.to_dict() for actuator_dict in self.actuators.values() for actuator in actuator_dict.values()] 
         }
