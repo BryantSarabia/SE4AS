@@ -103,20 +103,20 @@ class SoilMoistureSensor(Sensor):
                 if payload['status'] == 'on':
                     self.is_simulating = False
                     consumption = payload['value'] * 60  # convert from liters per second to liters per minute
-                    self.value = self.calculate_soil_moisture(consumption)
+                    self.value = max(self.min_value, self.calculate_soil_moisture(consumption))
                 else:
                     self.is_simulating = True
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 
     def calculate_soil_moisture(self, consumption: float):
-        flow_rate_cubic_meters = consumption / 1000
+        flow_rate_cubic_meters = consumption * 0.001
         infiltration_efficiency = 0.7
         application_area = self.field.area
         soil_depth = self.field.soil_depth
         soil_moisture = self.value
-        result = soil_moisture + (flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth)
-        return result * 100
+        result = soil_moisture + ((flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth))
+        return result
 
     def simulate_value(self):
         if self.is_simulating:

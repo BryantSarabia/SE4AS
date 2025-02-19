@@ -133,7 +133,6 @@
     "zone_id": "collebrincioni",
     "latitude": 42.4037844,
     "longitude": 13.4275238,
-    "soil_moisture_threshold": 50,
     "fields": [
       {
         "area": 1000,

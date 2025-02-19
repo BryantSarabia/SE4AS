@@ -35,7 +35,7 @@ class Field:
     def get_average_sensor_value(self, sensor_type: SensorType):
         if sensor_type in self.sensors:
             sensors = self.sensors[sensor_type]
-            values = [sensor.value for sensor in sensors if sensor.value is not None]
+            values = [sensor.value for sensor in sensors.values() if sensor.value is not None]
             return sum(values) / len(values) if values else None
         return None
     

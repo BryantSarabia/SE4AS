@@ -48,7 +48,7 @@ class Analyzer:
 
     def _on_connect(self, client, userdata, flags, rc: int) -> None:
         logger.info(f"Connected to MQTT broker with result code {rc}")
-        client.subscribe("zone/#")
+        client.subscribe("zone/+/field/+/sensor/+/+")
 
     def _load_zones(self) -> None:
         try:
@@ -100,6 +100,7 @@ class Analyzer:
         if not sensor:
             logger.error(f"Sensor {sensor_id} not found in field {field_id}")
             return
+        logger.info(f"Received data for zone {zone_id}, field {field_id}, sensor {sensor_id}: {payload}")
         sensor.set_value(payload['value'])
         analysis_result = self.analyze_data(zone_id, field_id)
         if analysis_result:
@@ -137,17 +138,21 @@ class Analyzer:
         soil_moisture_threshold_avg: float, 
         rain_prediction: bool
     ) -> Optional[dict]:
-        if soil_moisture_threshold_avg <= soil_moisture_threshold and not rain_prediction:
-            return {
-                "action": "trigger_irrigation",
-                "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"
-            }
-        elif soil_moisture_threshold_avg > soil_moisture_threshold or rain_prediction:
-            return {
-                "action": "stop_irrigation",
-                "reason": "(Sml > Smt) ⋁ Rp"
-            }
-        return None
+        logger.info(f"Analyzing irrigation action: Smt: {soil_moisture_threshold}, Sml: {soil_moisture_threshold_avg}, Rp: {rain_prediction}")
+        try:
+            if soil_moisture_threshold_avg <= soil_moisture_threshold and not rain_prediction:
+                return {
+                    "action": "trigger_irrigation",
+                    "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"
+                }
+            elif soil_moisture_threshold_avg > soil_moisture_threshold or rain_prediction:
+                return {
+                    "action": "stop_irrigation",
+                    "reason": "(Sml > Smt) ⋁ Rp"
+                }
+            return None
+        except Exception as e:
+            logger.info(f"Error determining irrigation action {e}")
 
     def _publish_analysis_result(
         self,
