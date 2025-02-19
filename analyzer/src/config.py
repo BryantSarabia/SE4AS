@@ -8,3 +8,4 @@ class Config:
     WEATHER_API_KEY: str
     ANALYZER_OUTPUT_TOPIC_PREFIX: str = 'analyzer'
     MQTT_KEEPALIVE: int = 60
+    NEXT_HOURS: int = 1

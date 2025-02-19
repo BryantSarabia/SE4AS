@@ -125,12 +125,14 @@ class Analyzer:
     
     def _is_rain_predicted(self, lat: float, lon: float) -> bool:
         weather_data = self.weather_fetcher.get_weather(lat, lon)
-        if weather_data:
-            return any(
-                'rain' in weather['weather'][0]['description'].lower()
-                for weather in weather_data['list']
-            )
-        return False
+        if not weather_data:
+            return False
+        try:
+            offset = min(self.config.NEXT_HOURS, len(weather_data['list']) - 1)
+            return 'rain' in weather_data['list']['weather'][offset]['description'].lower()
+        except Exception as e:
+            logger.error(f"Error checking rain prediction: {e}")
+            return False
 
     def _determine_irrigation_action(
         self, 
