@@ -8,9 +8,9 @@ class Field:
         self.field_id = field_id
         self.sensors: dict[str, dict[str, Sensor]]  = {}
         self.actuators: dict[str, dict[str, Actuator]] = {}
-        self.soil_moisture_threshold = soil_moisture_threshold
-        self.area = area
-        self.soil_depth = soil_depth
+        self.soil_moisture_threshold = float(soil_moisture_threshold)
+        self.area = float(area)
+        self.soil_depth = float(soil_depth)
 
     def to_dict(self):
         return {

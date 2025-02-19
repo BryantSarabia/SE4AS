@@ -5,6 +5,8 @@
     "longitude": 13.3267021,
     "fields": [
       {
+        "area": 1000,
+        "soil_depth": 5,
         "field_id": "coppito_pomodori",
         "soil_moisture_threshold": 70,
         "sensors": [
@@ -44,6 +46,8 @@
         ]
       },
       {
+        "area": 1000,
+        "soil_depth": 5,
         "field_id": "coppito_zucchine",
         "soil_moisture_threshold": 65,
         "sensors": [
@@ -83,6 +87,8 @@
         ]
       },
       {
+        "area": 1000,
+        "soil_depth": 5,
         "field_id": "coppito_peperoni",
         "soil_moisture_threshold": 55,
         "sensors": [
@@ -130,6 +136,8 @@
     "soil_moisture_threshold": 50,
     "fields": [
       {
+        "area": 1000,
+        "soil_depth": 5,
         "field_id": "collebrincioni_pomodori",
         "soil_moisture_threshold": 70,
         "sensors": [
@@ -169,6 +177,8 @@
         ]
       },
       {
+        "area": 1000,
+        "soil_depth": 5,
         "field_id": "collebrincioni_zucchine",
         "soil_moisture_threshold": 65,
         "sensors": [
@@ -208,6 +218,8 @@
         ]
       },
       {
+        "area": 1000,
+        "soil_depth": 5,
         "field_id": "collebrincioni_peperoni",
         "soil_moisture_threshold": 55,
         "sensors": [

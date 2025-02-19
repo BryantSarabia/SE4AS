@@ -61,6 +61,7 @@ class SensorSimulator:
             logger.error(f"Error loading zones: {e}")
 
     def simulate_sensor_data(self):
+        logger.info("Starting Sensor Simulator")
         while True:
             for zone in self.zones:
                 for field in zone.fields.values():

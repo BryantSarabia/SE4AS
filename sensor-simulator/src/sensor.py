@@ -8,9 +8,8 @@ from threading import Thread
 from typing import Tuple
 
 import paho.mqtt.client as mqtt
-from actuator import ActuatorType
-from field import Field
-from zone import Zone
+
+from .actuator import ActuatorType
 
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/+/+/consumption'
@@ -28,7 +27,7 @@ class SensorType(Enum):
     TEMPERATURE = 'temperature'
 
 class Sensor(ABC):
-    def __init__(self, sensor_id: str, type: SensorType, zone: Zone, field: Field, value=None, min_value=None, max_value=None):
+    def __init__(self, sensor_id: str, type: SensorType, zone, field, value=None, min_value=None, max_value=None):
         self.sensor_id = sensor_id
         self.value = value
         self.type = type
@@ -61,9 +60,9 @@ class Sensor(ABC):
         self.client.on_message = self.on_message
         self.client.loop_forever()
 
-    @abstractmethod
+    
     def on_connect(self, client, userdata, flags, rc):
-        self.client.subscribe(self.consumption_topic)
+        pass
 
     def _parse_mqtt_url(self, url: str) -> Tuple[str, int]:
         parts = url.split(":")

@@ -109,10 +109,13 @@ class ZoneService:
             try:
                 field = Field(
                     field_data['field_id'],
-                    field_data['soil_moisture_threshold']
+                    field_data['soil_moisture_threshold'],
+                    field_data['area'],
+                    field_data['soil_depth']
                 )
             except Exception as e:
                 logger.error(f"Error creating field {field.field_id}: {e}")
+                return
             for sensor_data in field_data.get('sensors', []):
                 try:
                     sensor = SensorFactory.create_sensor(zone=zone, field=field, **sensor_data)
