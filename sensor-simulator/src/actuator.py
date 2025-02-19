@@ -12,6 +12,7 @@ import paho.mqtt.client as mqtt
 EXECUTOR = 'executor/zone/{zone_id}/field/{field_id}'
 CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/{actuator_id}/{actuator_type}/consumption'
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
+SPEED_UP_SOIL_MOISTURE_BY = 2 * 60 # 2 hours
 
 logging.basicConfig(
     level=logging.INFO,
@@ -89,11 +90,10 @@ class Actuator(ABC):
         pass
 
     def start(self, value: float) -> None:
+        if self.status == 'on':
+            return
         try:
-            if self.min_value is not None and self.max_value is not None:
-                self.value = max(self.min_value, min(self.max_value, value))
-            else:
-                self.value = value
+            self.value = max(self.min_value, min(self.max_value, value))
             self.status = 'on'
             self._start_consumption_thread()
             logger.info(f"Started actuator {self.actuator_id} with value {self.value}")
@@ -101,6 +101,8 @@ class Actuator(ABC):
             logger.error(f"Error starting actuator: {e}")
     
     def stop(self) -> None:
+        if self.status == 'off':
+            return
         try:
             self.value = None
             self.status = 'off'
@@ -124,7 +126,7 @@ class Actuator(ABC):
         try:
             while self.status == 'on':
                 payload = {
-                    'value': ((self.value / self.max_value) * self.consumption) / 60,
+                    'value': ( ((self.value / self.max_value) * self.consumption) / 60 ) * SPEED_UP_SOIL_MOISTURE_BY,
                     'measurement': self.measurement,
                     'status': self.status
                 }

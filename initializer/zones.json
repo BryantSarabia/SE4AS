@@ -5,8 +5,8 @@
     "longitude": 13.3267021,
     "fields": [
       {
-        "area": 1000,
-        "soil_depth": 5,
+        "area": 600,
+        "soil_depth": 0.5,
         "field_id": "coppito_pomodori",
         "soil_moisture_threshold": 70,
         "sensors": [
@@ -33,21 +33,21 @@
           { "sensor_id": "sensor21", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
-          {"actuator_id": "actuator1", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator2", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator3", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator4", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator5", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator1", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator2", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator3", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator4", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator5", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"}
+          {"actuator_id": "actuator1", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator2", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator3", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator4", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator5", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator1", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator2", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator3", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator4", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator5", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       },
       {
-        "area": 1000,
-        "soil_depth": 5,
+        "area": 200,
+        "soil_depth": 0.5,
         "field_id": "coppito_zucchine",
         "soil_moisture_threshold": 65,
         "sensors": [
@@ -74,21 +74,21 @@
           { "sensor_id": "sensor42", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
-          {"actuator_id": "actuator6", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator7", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator8", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator9", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator10", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator11", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator12", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator13", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator14", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator15", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"}
+          {"actuator_id": "actuator6", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator7", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator8", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator9", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator10", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator11", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator12", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator13", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator14", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator15", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       },
       {
-        "area": 1000,
-        "soil_depth": 5,
+        "area": 300,
+        "soil_depth": 0.5,
         "field_id": "coppito_peperoni",
         "soil_moisture_threshold": 55,
         "sensors": [
@@ -115,16 +115,16 @@
           { "sensor_id": "sensor63", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
-          {"actuator_id": "actuator16", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator17", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator18", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator19", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator20", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator21", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator22", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator23", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator24", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator25", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"}
+          {"actuator_id": "actuator16", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator17", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator18", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator19", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator20", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator21", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator22", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator23", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator24", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator25", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       }
     ]
@@ -135,8 +135,8 @@
     "longitude": 13.4275238,
     "fields": [
       {
-        "area": 1000,
-        "soil_depth": 5,
+        "area": 450,
+        "soil_depth": 0.5,
         "field_id": "collebrincioni_pomodori",
         "soil_moisture_threshold": 70,
         "sensors": [
@@ -163,21 +163,21 @@
           { "sensor_id": "sensor84", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
-          {"actuator_id": "actuator26", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator27", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator28", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator29", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator30", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator31", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator32", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator33", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator34", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator35", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"}
+          {"actuator_id": "actuator26", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator27", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator28", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator29", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator30", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator31", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator32", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator33", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator34", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator35", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       },
       {
-        "area": 1000,
-        "soil_depth": 5,
+        "area": 320,
+        "soil_depth": 0.5,
         "field_id": "collebrincioni_zucchine",
         "soil_moisture_threshold": 65,
         "sensors": [
@@ -204,21 +204,21 @@
           { "sensor_id": "sensor105", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
-          {"actuator_id": "actuator36", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator37", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator38", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator39", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator40", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator41", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator42", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator43", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator44", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator45", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"}
+          {"actuator_id": "actuator36", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator37", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator38", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator39", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator40", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator41", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator42", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator43", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator44", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator45", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       },
       {
-        "area": 1000,
-        "soil_depth": 5,
+        "area": 400,
+        "soil_depth": 0.5,
         "field_id": "collebrincioni_peperoni",
         "soil_moisture_threshold": 55,
         "sensors": [
@@ -245,16 +245,16 @@
           { "sensor_id": "sensor126", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
-          {"actuator_id": "actuator46", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator47", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator48", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator49", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator50", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator51", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator52", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator53", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator54", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"},
-          {"actuator_id": "actuator55", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 0.4, "measurement": "lpm"}
+          {"actuator_id": "actuator46", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator47", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator48", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator49", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator50", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator51", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator52", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator53", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator54", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
+          {"actuator_id": "actuator55", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       }
     ]

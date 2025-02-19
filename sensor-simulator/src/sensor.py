@@ -13,6 +13,7 @@ from .actuator import ActuatorType
 
 MQTT_BROKER_URL = os.getenv('MQTT_BROKER_URL', 'mosquitto:1883')
 CONSUMPTION_TOPIC = 'zone/{zone_id}/field/{field_id}/actuator/+/+/consumption'
+SPEED_UP_SOIL_MOISTURE_BY = 2 * 60 # 2 hours
 
 logging.basicConfig(
     level=logging.INFO,
@@ -103,18 +104,20 @@ class SoilMoistureSensor(Sensor):
                 if payload['status'] == 'on':
                     self.is_simulating = False
                     consumption = payload['value'] * 60  # convert from liters per second to liters per minute
-                    self.value = max(self.min_value, self.calculate_soil_moisture(consumption))
+                    self.value = max(self.min_value, min(self.calculate_soil_moisture(consumption), self.max_value))
+                    logger.info(f"Soil moisture value updated to {self.value}")
                 else:
                     self.is_simulating = True
         except Exception as e:
             logger.error(f"Error processing message: {e}")
 
     def calculate_soil_moisture(self, consumption: float):
-        flow_rate_cubic_meters = consumption * 0.001
+        flow_rate_cubic_meters = consumption * 0.001 # convert from liters to cubic meters and speed up simulation
         infiltration_efficiency = 0.7
         application_area = self.field.area
         soil_depth = self.field.soil_depth
         soil_moisture = self.value
+        logger.info(f"Calculating soil moisture {((flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth))}")
         result = soil_moisture + ((flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth))
         return result
 
