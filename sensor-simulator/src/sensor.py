@@ -123,7 +123,7 @@ class SoilMoistureSensor(Sensor):
 
     def simulate_value(self):
         if self.is_simulating:
-            value = self.value + random.uniform(-5, 1)
+            value = self.value + random.uniform(-1, 1)
             self.value = max(self.min_value, min(self.max_value, value))
         return self.value
 
