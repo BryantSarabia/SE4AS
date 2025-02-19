@@ -161,6 +161,25 @@ def create_field(zone_id):
     except Exception as e:
         logger.error(f"Error creating field: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+    
+#zones/coppito/fields/coppito_pomodori/soil_moisture_threshold
+@app.route('/zones/<zone_id>/fields/<field_id>/soil_moisture_threshold', methods=['PUT'])
+def create_soil_moisture_threshold(zone_id, field_id):
+    try:
+        data = request.json
+        soil_moisture_threshold = data.get('soil_moisture_threshold', None)
+        if soil_moisture_threshold is None:
+            return jsonify({"error": "soil_moisture_threshold is required"}), 400
+
+        zones_collection.update_one(
+            {'zone_id': zone_id, 'fields.field_id': field_id},
+            {'$set': {'fields.$.soil_moisture_threshold': soil_moisture_threshold}}
+        )
+        return jsonify(data), 201
+    except Exception as e:
+        logger.error(f"Error updating soil moisture threshold: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
 
 @app.route('/zones/<zone_id>/preferences', methods=['GET'])
 def get_preferences(zone_id):
