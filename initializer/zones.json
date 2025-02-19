@@ -144,35 +144,25 @@
           { "sensor_id": "sensor65", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor66", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor67", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
-          { "sensor_id": "sensor68", "type": "soil_moisture", "value": 50, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor69", "type": "light", "value": 1500, "min_value":0, "max_value": 3000 },
           { "sensor_id": "sensor70", "type": "light", "value": 1500, "min_value":0, "max_value": 3000 },
           { "sensor_id": "sensor71", "type": "light", "value": 1500, "min_value":0, "max_value": 3000 },
           { "sensor_id": "sensor72", "type": "light", "value": 1500, "min_value":0, "max_value": 3000 },
-          { "sensor_id": "sensor73", "type": "light", "value": 1500, "min_value":0, "max_value": 3000 },
           { "sensor_id": "sensor74", "type": "humidity", "value": 60, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor75", "type": "humidity", "value": 60, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor76", "type": "humidity", "value": 60, "min_value": 0, "max_value": 100 },
-          { "sensor_id": "sensor77", "type": "humidity", "value": 60, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor78", "type": "humidity", "value": 60, "min_value": 0, "max_value": 100 },
           { "sensor_id": "sensor79", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 },
           { "sensor_id": "sensor80", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 },
           { "sensor_id": "sensor81", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 },
           { "sensor_id": "sensor82", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 },
-          { "sensor_id": "sensor83", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 },
-          { "sensor_id": "sensor84", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
+          { "sensor_id": "sensor83", "type": "temperature", "value": 20, "min_value": -20, "max_value": 80 }
         ],
         "actuators": [
           {"actuator_id": "actuator26", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator27", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
           {"actuator_id": "actuator28", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator29", "type": "drip_irrigation", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator30", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
           {"actuator_id": "actuator31", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator32", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator33", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator34", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"},
-          {"actuator_id": "actuator35", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
+          {"actuator_id": "actuator34", "type": "sprinkler", "min_value": 0, "max_value": 100, "consumption": 300, "measurement": "lpm"}
         ]
       },
       {
