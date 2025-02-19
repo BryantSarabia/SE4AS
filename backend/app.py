@@ -4,8 +4,12 @@ import os
 import pymongo
 from bson import ObjectId
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 # Configuration
 APP_PORT = int(os.getenv('BACKEND_PORT', 5000))
@@ -133,6 +137,18 @@ def get_actuators(zone_id, field_id):
         return jsonify({}), 404
     except Exception as e:
         logger.error(f"Error fetching actuators: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+@app.route('/zones/<zone_id>/fields', methods=['GET'])
+def get_fields(zone_id):
+    try:
+        zone = zones_collection.find_one({'zone_id': zone_id}, {'_id': 0})
+        if zone:
+            return jsonify(zone['fields'])
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching fields: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/zones/<zone_id>/fields', methods=['POST'])
