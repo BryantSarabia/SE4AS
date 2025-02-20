@@ -162,6 +162,17 @@ def create_field(zone_id):
         logger.error(f"Error creating field: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
     
+@app.route('/zones/<zone_id>/fields/<field_id>/soil_moisture_threshold', methods=['GET'])
+def get_soil_moisture_threshold(zone_id, field_id):
+    try:
+        soil_moisture_threshold = zones_collection.find_one({'zone_id': zone_id, 'fields.field_id': field_id}, {'_id': 0, 'fields.$': 1})
+        if soil_moisture_threshold:
+            return jsonify(soil_moisture_threshold['fields'][0].get('soil_moisture_threshold', {}))
+        return jsonify({}), 404
+    except Exception as e:
+        logger.error(f"Error fetching soil moisture threshold: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+    
 #zones/coppito/fields/coppito_pomodori/soil_moisture_threshold
 @app.route('/zones/<zone_id>/fields/<field_id>/soil_moisture_threshold', methods=['PUT'])
 def create_soil_moisture_threshold(zone_id, field_id):
