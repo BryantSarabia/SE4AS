@@ -59,7 +59,7 @@ services:
     restart: always
     ports:
       - 1882:1883
-      - 9001:9001
+      - 9002:9001
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
     networks:

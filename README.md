@@ -31,76 +31,92 @@ The sensors and actuators used in this project are simulated using python. The s
 - InfluxDB
 - Telegraf
 - OpenWeatherMap API
+- Paho MQTT
 
 ## Architecture
 
-![Architecture diagram](./docs/arch.jpg)
+![Architecture diagram](./docs/hld.png)
 
 The architecture of the system is the following:
 
-### Sensors and actuators
+### Sensors
 
-The sensors and actuators are simulated using Node.js.
-The measurement unit of the light sensor is **lux** and the measurement unit of the motion sensor is a **boolean** value.
+These are crucial for **monitoring** and gathering real-time data about environmental conditions. The
+main sensors are:
 
-- **Light Sensor**: The light sensor is used to measure the brightness of the room. It generates a random number between 0 and 100 every 5 seconds. It receives data from simulated actuators to change its value.
-- **Motion Sensor**: The motion sensor is used to detect motion in the room. It generates a random number between 0 and 1 every 5 seconds.
-- **Light Bulb**: The light bulb is used to control the brightness of the room. It receives commands from the central control system. It has 5 methods:
-  - `on`: Turns on the light
-  - `off`: Turns off the light
-  - `increase`: Increases the brightness of the light
-  - `decrease`: Decreases the brightness of the light
-  - `updateConsumption`: Updates the current consumption of the light and publishes the value to the MQTT broker.
-    - The current consumption is calculated using the following formula: `currentConsumption = currentLux * consumptionPerLux`
+- Soil moisture sensor
+- Light sensor
+- Temperature sensor
+- Humidity sensor
 
-### Server (backend)
+### Actuators
 
-The server is implemented using Node.js and Express, it is used to get and update the user preferences and to create a new dashboard on grafana for every sensor and actuator added to the system.
+The irrigation devices are the physical components that deliver water to the plants. The executor
+instructs them when to start or stop watering.
+Examples of irrigation devices:
 
-The user preferences are stored in a MongoDB database.
+- Sprinklers
+- Drip irrigation lines
 
-**User preferences sent to the backend are valitated using [zod](https://zod.dev/).**
+### Monitor
 
-### Grafana
+The monitor receives data from sensors and actuators and stores it on the knowledge.
 
-Grafana is used to create the dashboards for the sensors and actuators. The dashboards are created using the Grafana API.
+### Analyzer
 
-### Influxdb
+The analyzer is a python application that receives messages from the sensors and actuators via MQTT
+and sends. It analyzes the data considering the system settings, the current values of the sensors and
+the weather conditions of the zone, the output is then sent to the Planner via MQTT.
 
-Influxdb is used to store the data of the sensors and actuators.
+### Planner
 
-### Node-RED
+The Planner is a python application that runs on a container. It receives from the analysis performed by
+the Analyzer; it applies a policy and then sends it to the Executor.
 
-Node-RED is used to create the flows of the system. The flows are used to listen for sensor and actuators data and to store it in the Influxdb database.
+### Executor
 
-It is also used to create the dashboard for the user to control the lights and to monitor the sensors and actuators.
+The executor is a python application running on a container. It receives commands from the Planner
+and sends them to the actuators.
+
+### Simulator
+
+The Simulator is a python application running on a container. It gets the system settings from the
+Backend and starts the simulation. It simulates the sensors and actuators.
 
 ### Mosquitto
 
-Mosquitto is used to create the MQTT broker for the system. The sensors and actuators use MQTT to communicate with the server and with Node-RED.
+Mosquitto is used to create the MQTT broker for the system.
 
-### Central control system
+### MongoDB
 
-The central control system is implemented using Node.js. It is used to register the sensors and actuators in the system and to create the dashboards for them in Grafana. It is also used to get and update the user preferences.
+MongoDB is used to store the system information such as zones, fields, sensors, actuators and
+settings.
 
-It is responsible for evaluating the sensors data by using the user preferences, to send the commands to the actuators and turning off all the lights when the user disables them.
+### Initializer
 
-There is a evaluation rule for every type of sensor. The current evaluation rules are the following:
+The initializer is a python application running on a container. It follows the init container pattern. Its
+function is to populate the system configuration if it has not been loaded yet.
 
-- **Light rule**:
-  - If lights are disabled, do not perform any action.
-  - If the lights are off, do not perform any action.
-  - If no motion is detected in the room, do not perform any action.
-  - Otherwise, if the light sensor value is less than the minimum brightness, increase the brightness. If the light sensor value is greater than the maximum brightness, decrease the brightness.
+### Grafana
 
-- **Motion rule**:
-  - If lights are disabled, do not perform any action.
-  - If there is motion in the room and lights are off, turn on the lights.
-  - If there is motion in the room and lights are on, do not perform any action.
-  - Otherwise, turn off the lights.
+Grafana is used to monitor the zones, fields, sensor and actuators data. It also is used to update the
+soil moisture threshold.
 
-After the central control system generates the action to perform, it sends the action to the actuator using MQTT.
-  
+## Data model
+
+![Data Model](./docs/data-model.png)
+
+## Adaptation Goals
+
+| Goal                     | Description                                                                                       | Evaluation metric         |
+|--------------------------|---------------------------------------------------------------------------------------------------|---------------------------|
+| Trigger irrigation devices | Trigger irrigation devices when the soil moisture level drops below a certain threshold and rain is not predicted in the next X hours (adjustable by the user). | \( (SmL \leq Smt) \, \text{Λ} - Rp \) |
+| Stop irrigation           | Stop irrigation when the soil moisture level has reached the soil moisture threshold or rain is predicted in the next X hours (adjustable by the user) to avoid overwatering. | \( (SmL > Smt) \, \text{V} \, Rp \) |
+
+- \( SmL \) = Soil moisture level
+- \( Smt \) = Soil moisture threshold
+- Rp = rain prediction
+
 ## Requirements
 
 - [Docker](https://www.docker.com/get-started/)
@@ -115,24 +131,14 @@ After the central control system generates the action to perform, it sends the a
   - Username: `admin`
   - Password: `admin`
   - Url: <http://localhost:3000>
-- **NodeRED**:
-  - Url: <http://localhost:1880>
 - **Mosquitto**:
   - Local port: `1882` and `9002`
 
 ## Installation
 
-- Clone the repository `git clone <https://github.com/BryantSarabia/SE4IOT.git>`
+- Clone the repository `git clone <https://github.com/BryantSarabia/SE4AS.git>`
 - Run `docker-compose up`
-- Open the web browser and go to <http://localhost:1880/ui>
-
-## Usage
-
-- Open the [nodered dashboard](http://localhost:1880/ui)
-- Use the dashboard to set the minimum and maximum brightness of the lights
-- Use the dashboard to monitor the light sensor and motion sensor values
-- Use the dashboard to monitor the current consumption of the lights
-- Use the dashboardto monitor the total energy consumption of the lights in the last 30 days
+- Open the web browser and go to <http://localhost:3000>
 
 ## Authors
 
