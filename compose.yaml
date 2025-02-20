@@ -5,6 +5,7 @@ services:
     build: ./grafana
     container_name: GRAFANA
     restart: always
+    user: '0'
     ports:
       - 3000:3000
     volumes:
