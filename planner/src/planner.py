@@ -82,7 +82,7 @@ class Planner:
                 return None
 
             if action == "trigger_irrigation":
-                return {"action": "start_irrigation", "reason": reason}
+                return {"action": "start_irrigation", "reason": reason, "value": 100}
             elif action == "stop_irrigation":
                 return {"action": "stop_irrigation", "reason": reason}
             else:
