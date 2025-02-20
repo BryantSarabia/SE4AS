@@ -76,15 +76,16 @@ class Planner:
         try:
             action = payload.get('action')
             reason = payload.get('reason')
+            water_need = payload.get('water_need')
 
             if not action or not reason:
                 logger.error("Missing action or reason in payload")
                 return None
 
             if action == "trigger_irrigation":
-                return {"action": "start_irrigation", "reason": reason, "value": 100}
+                return {"action": "start_irrigation", "reason": reason, "water_need": water_need}
             elif action == "stop_irrigation":
-                return {"action": "stop_irrigation", "reason": reason}
+                return {"action": "stop_irrigation", "reason": reason, "water_need": 0}
             else:
                 logger.warning(f"Unknown action received: {action}")
                 return None

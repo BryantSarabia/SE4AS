@@ -105,7 +105,6 @@ class SoilMoistureSensor(Sensor):
                     self.is_simulating = False
                     consumption = payload['value'] * 60  # convert from liters per second to liters per minute
                     self.value = max(self.min_value, min(self.calculate_soil_moisture(consumption), self.max_value))
-                    logger.info(f"Soil moisture value updated to {self.value}")
                 else:
                     self.is_simulating = True
         except Exception as e:
@@ -117,13 +116,13 @@ class SoilMoistureSensor(Sensor):
         application_area = self.field.area
         soil_depth = self.field.soil_depth
         soil_moisture = self.value
-        logger.info(f"Calculating soil moisture {((flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth))}")
+        # logger.info(f"Calculating soil moisture {((flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth))}")
         result = soil_moisture + ((flow_rate_cubic_meters * infiltration_efficiency) / (application_area * soil_depth))
         return result
 
     def simulate_value(self):
         if self.is_simulating:
-            value = self.value + random.uniform(-1, 1)
+            value = self.value + random.uniform(-3, 1)
             self.value = max(self.min_value, min(self.max_value, value))
         return self.value
 

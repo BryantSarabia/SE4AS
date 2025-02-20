@@ -44,6 +44,22 @@ class Actuator(ABC):
         self._setup_mqtt_client()
         self._consumption_thread = None
 
+    def calculate_power_percentage(self, water_need: float) -> float:
+        """
+        Calculate the percentage of power that the actuator should be operating at.
+        
+        :param water_need: The water need of the field in liters.
+        :return: The percentage of power (0 to 100) that the actuator should be operating at.
+        """
+        try:
+            required_runtime = water_need / self.consumption
+            power_percentage = (required_runtime / 60) * 100
+            power_percentage = max(self.min_value, min(self.max_value, power_percentage))
+            return power_percentage
+        except Exception as e:
+            logger.error(f"Error calculating power percentage: {e}")
+            return 0
+
     def _setup_mqtt_client(self) -> None:
         """Set up MQTT client with proper configuration."""
         try:
@@ -146,11 +162,12 @@ class Sprinkler(Actuator):
                 return
                 
             if action == ActionType.START_IRRIGATION.value:
-                value = payload.get('value')
-                if value is None:
-                    logger.error("Missing value for start_irrigation")
+                water_need = payload.get('water_need')
+                if water_need is None:
+                    logger.error("Missing water need for start_irrigation")
                     return
-                self.start(float(value))
+                power_percentage = self.calculate_power_percentage(float(water_need))
+                self.start(power_percentage)
             elif action == ActionType.STOP_IRRIGATION.value:
                 self.stop()
             else:
@@ -172,11 +189,12 @@ class DripIrrigation(Actuator):
                 return
                 
             if action == ActionType.START_IRRIGATION.value:
-                value = payload.get('value')
-                if value is None:
-                    logger.error("Missing value for start_irrigation")
+                water_need = payload.get('water_need')
+                if water_need is None:
+                    logger.error("Missing water need for start_irrigation")
                     return
-                self.start(float(value))
+                power_percentage = self.calculate_power_percentage(float(water_need))
+                self.start(power_percentage)
             elif action == ActionType.STOP_IRRIGATION.value:
                 self.stop()
             else:

@@ -9,3 +9,4 @@ class Config:
     ANALYZER_OUTPUT_TOPIC_PREFIX: str = 'analyzer'
     MQTT_KEEPALIVE: int = 60
     NEXT_HOURS: int = 1
+    SOIL_CAPACITY = 0.25

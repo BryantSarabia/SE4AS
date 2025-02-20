@@ -102,11 +102,11 @@ class Executor:
     def _execute_action(self, client: mqtt.Client, zone_id: str, field_id: str, payload: Dict) -> None:
         try:
             action = payload['action']
-            value = payload['value']
+            water_need = payload['water_need']
             reason = payload['reason']
             
             topic = f"{self.config.EXECUTOR_TOPIC_PREFIX}/zone/{zone_id}/field/{field_id}"
-            client.publish(topic, json.dumps({"command": action, "value": value}))
+            client.publish(topic, json.dumps({"command": action, "water_need": water_need}))
             
             logger.info(
                 f"Executed action for {zone_id}/{field_id}: {action}, Reason: {reason}"

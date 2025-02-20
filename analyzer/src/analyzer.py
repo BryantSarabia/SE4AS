@@ -23,6 +23,7 @@ class Analyzer:
         self.zone_service = ZoneService(config.BACKEND_URL)
         self.zones: Dict[str, Zone] = {}
         self.weather_fetcher = WeatherFetcher(config.WEATHER_API_KEY)
+        self.soil_capacity = config.SOIL_CAPACITY
         self._load_zones()
 
     def run(self) -> None:
@@ -118,7 +119,7 @@ class Analyzer:
             rain_prediction = self._is_rain_predicted(zone.latitude, zone.longitude)
             soil_moisture_threshold = field.soil_moisture_threshold
 
-            return self._determine_irrigation_action(soil_moisture_threshold, soil_moisture_threshold_avg, rain_prediction)
+            return self._determine_irrigation_action(soil_moisture_threshold, soil_moisture_threshold_avg, rain_prediction, field)
         except Exception as e:
             logger.error(f"Error analyzing data for zone {zone_id}, field {field_id}: {e}")
             return None
@@ -138,12 +139,21 @@ class Analyzer:
         self, 
         soil_moisture_threshold: float,
         soil_moisture_threshold_avg: float, 
-        rain_prediction: bool
+        rain_prediction: bool,
+        field: Field
     ) -> Optional[dict]:
         logger.info(f"Analyzing irrigation action: Smt: {soil_moisture_threshold}, Sml: {soil_moisture_threshold_avg}, Rp: {rain_prediction}")
         try:
             if soil_moisture_threshold_avg <= soil_moisture_threshold and not rain_prediction:
+                water_need = self.calculate_water_required(
+                    soil_moisture_threshold_avg,
+                    soil_moisture_threshold,
+                    self.soil_capacity,
+                    field.soil_depth,
+                    field.area
+                )
                 return {
+                    "water_need": water_need,
                     "action": "trigger_irrigation",
                     "reason": "(Sml ≤ Smt) ⋀ ⌐Rp"
                 }
@@ -168,3 +178,22 @@ class Analyzer:
             logger.info(f"Analysis result for {zone_id}/{field_id}: {analysis_result}")
         except Exception as e:
             logger.error(f"Failed to publish analysis result: {e}")
+
+    def calculate_water_required(self, current_moisture, threshold_moisture, soil_capacity, root_depth, area):
+        """
+        Calculate the water required to reach the soil moisture threshold.
+        
+        :param current_moisture: Current soil moisture (%).
+        :param threshold_moisture: Target soil moisture (%).
+        :param soil_capacity: Soil water-holding capacity (decimal).
+        :param root_depth: Root zone depth (meters).
+        :param area: Area to be irrigated (square meters).
+        :return: Water required (liters).
+        """
+        current_moisture_decimal = current_moisture / 100
+        threshold_moisture_decimal = threshold_moisture / 100
+        water_deficit = threshold_moisture_decimal - current_moisture_decimal
+        soil_volume = root_depth * area
+        # Calculate water required
+        water_required = water_deficit * soil_capacity * soil_volume * 1000 # Convert from m3 to liters
+        return water_required
