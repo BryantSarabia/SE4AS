@@ -120,6 +120,7 @@ soil moisture threshold.
 ## Requirements
 
 - [Docker](https://www.docker.com/get-started/)
+- [Open Weather Map API Key](https://openweathermap.org/price)
 
 ## Configuration
 
@@ -133,6 +134,7 @@ soil moisture threshold.
   - Url: <http://localhost:3000>
 - **Mosquitto**:
   - Local port: `1882` and `9002`
+- **Open Weather Map API Key**: Put your API key in the `./analyzer/.env` file
 
 ## Installation
 
